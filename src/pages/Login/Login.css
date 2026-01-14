@@ -1,0 +1,116 @@
+.login-container {
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  background-color: #ffffff;
+  display: flex;
+  margin-top: 40px;
+}
+.whim-logo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: 90px;
+}
+.login-image-wrapper {
+  padding: 50px;
+}
+.login-form-container {
+  padding: 50px;
+
+  box-shadow: -10px 0 20px rgba(0, 0, 0, 0.08);
+}
+.login-container-image {
+  height: 300px;
+}
+.login-title {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0 0 20px;
+}
+.login-image-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+.login-image {
+  height: 150px;
+  width: auto;
+}
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.login-form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.login-input {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.login-input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
+}
+
+.login-button {
+  padding: 12px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.login-button:hover:not(:disabled) {
+  background-color: var(--secondary);
+}
+
+.login-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.login-error {
+  color: #e53935;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
+
+.login-link-text {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+
+.login-link {
+  margin-left: 5px;
+  appearance: none;
+  text-decoration: none;
+  border: none;
+  background: none;
+  color: var(--primary);
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.login-link:hover {
+  color: var(--secondary);
+  text-decoration: underline;
+}

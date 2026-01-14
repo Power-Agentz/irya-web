@@ -1,0 +1,17 @@
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  height: 15px;
+  margin: 10px 0 20px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  color: var(--primary);  
+  gap: 6px;
+  font-size: 14px;
+  font-family: var(--font-headline);
+}
+.back-button > img {
+  height: 100%;
+}

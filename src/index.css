@@ -1,0 +1,36 @@
+:root {
+  --primary: #87967a;
+  --primary-dark: #6e7f61;
+  --secondary: #efbd32;
+  --irya-white: #f6f4ef;
+  --third: #963149;
+  --white: #fefefe;
+  --font-headline: "Montserrat", sans-serif;
+  --bg-desktop: url("./assets/bg-desktop.png");
+  --bg-mobile: url("./assets/bg-mobile.png");
+}
+#root {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+html,
+body {
+  height: 100%;
+  font-family: var(--font-headline);
+  color: var(--dark);
+  margin: 0;
+}
+#root {
+  min-height: 100vh;
+  background-color: var(--primary-dark);
+}
+input {
+  accent-color: var(--primary);
+}
+@media (max-width: 600px) {
+  body,
+  #root {
+    height: 100vh;
+  }
+}

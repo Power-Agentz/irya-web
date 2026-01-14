@@ -1,0 +1,128 @@
+.register-form-container {
+  padding: 20px;
+  width: 100%;
+}
+
+.input-group-row {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.input-field-half {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-label {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+.wizard-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.wizard-buttons > button {
+  margin-left: 10px;
+}
+
+.slide-wrapper {
+  display: flex;
+  margin-top: 20px;
+}
+
+.slide-input-group {
+  height: 80px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.slide-input {
+  width: 100%;
+  height: fit-content;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  font-family: var(--font-headline);
+  margin-top: 10px;
+}
+.slide-input:focus {
+  outline-color: var(--primary);
+}
+
+.wizard-buttons {
+  margin-top: 25px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.error-msg {
+  color: #b00020;
+  margin-top: 10px;
+}
+
+.step-counter {
+  font-size: 0.9rem;
+  color: #666;
+}
+.welcome-text {
+  font-size: 16px;
+  color: #333;
+  font-weight: 400;
+}
+.welcome-text > h1 {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0 0 20px;
+}
+
+.welcome-text > p {
+  font-size: 12px;
+  font-weight: 300;
+  margin: 10px 0 30px;
+}
+.welcome-text a {
+  text-decoration: none;
+  color: var(--primary);
+  font-weight: 600;
+}
+.register-image-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+.register-image {
+  height: 150px;
+  width: auto;
+}
+@media (max-width: 600px) {
+  .register-container {
+    max-width: 100%;
+    padding: 10px;
+    margin: 20px auto;
+  }
+  .input-group-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background: #e6e6e6;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--primary));
+  transition: width 0.35s ease;
+}

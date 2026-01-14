@@ -1,0 +1,65 @@
+.home-hero {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-card {
+  max-width: 480px;
+  width: 100%;
+  padding: 40px 32px;
+  border-radius: 12px;
+  background-color: var(--surface, #f6f4ef);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+h1,
+h2 {
+  margin: 0;
+  padding: 0;
+}
+.home-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin-bottom: 12px;
+}
+
+.home-description,
+.home-subtitle,
+.home-content {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.5;
+  font-weight: 300;
+}
+.home-subtitle > strong {
+  font-weight: 600;
+}
+
+.home-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.home-secondary-link {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.home-secondary-link:hover {
+  color: var(--primary-dark);
+}
+
+.home-helper {
+  margin-top: 50px;
+  font-size: 11px;
+  color: #777;
+}
