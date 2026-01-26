@@ -27,16 +27,19 @@ const Home = () => {
           <>
             <header className="home-header">
               <h1 className="home-subtitle">
-                Sou a <strong>Irya</strong>
+                Antes de seguirmos, quero te conhecer um pouco mais.
               </h1>
               <h2 className="home-description">
-                Meu objetivo é te ajudar a entender melhor seu perfil por meio
-                de uma avaliação simples e personalizada.
+                Este questionário faz parte do cuidado que estamos construindo
+                juntas. Com as suas respostas, vou conseguir entender melhor
+                seus hábitos, sua rotina e o momento que você está vivendo
+                agora.
               </h2>
             </header>
             <p className="home-message">
-              Para isso, responda um breve questionário. Com base nas suas
-              respostas, conseguirei gerar uma análise mais precisa para você.
+              A partir disso, vou te ajudar a construir um plano claro, possível
+              e alinhado com a sua vida real — com base na medicina do estilo de
+              vida.
             </p>
 
             <div className="home-actions">
