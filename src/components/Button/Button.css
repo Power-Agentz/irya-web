@@ -6,26 +6,31 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 700;
-  font-size: 1rem;
-  transition: background-color 0.3s ease, transform 0.1s ease;
+  font-weight: 300;
+  font-size: 14px;
+  transition:
+    background-color 0.3s ease,
+    transform 0.1s ease;
 }
+
 .whim-button--secondary {
   font-family: var(--font-headline);
   padding: 12px;
-  background-color: #fff;
+  background-color: transparent;
   color: var(--primary);
   border: 1px solid var(--primary);
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 700;
-  font-size: 1rem;
-  transition: background-color 0.3s ease, transform 0.1s ease;
+  font-weight: 300;
+  font-size: 14px;
+  transition:
+    background-color 0.3s ease,
+    transform 0.1s ease;
 }
 .whim-button:hover:not(:disabled) {
   opacity: 0.9;
 }
-.whim-button:disabled {
+.whim-button--primary:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
