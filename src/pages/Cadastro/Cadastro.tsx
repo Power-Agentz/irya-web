@@ -18,14 +18,16 @@ const steps = [
   "confirm",
 ] as const;
 
+type Step = (typeof steps)[number];
+
 export default function Cadastro() {
   const [stepIndex, setStepIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const navigate = useNavigate();
+
   const progress = ((stepIndex + 1) / steps.length) * 100;
-  const currentStep = steps[stepIndex];
+  const currentStep: Step = steps[stepIndex];
 
   const [formData, setFormData] = useState({
     preferredName: "",
@@ -42,6 +44,44 @@ export default function Cadastro() {
   const next = () => setStepIndex((s) => Math.min(s + 1, steps.length - 1));
   const back = () => setStepIndex((s) => Math.max(s - 1, 0));
 
+  /* ------------------ VALIDACOES ------------------ */
+
+  const isValidName = (name: string) =>
+    /^[A-Za-zÀ-ÿ\s]+$/.test(name.trim()) && name.trim().length >= 2;
+
+  const isValidPhone = (phone: string) => /^\(\d{2}\) \d{5}-\d{4}$/.test(phone);
+
+  const isValidPassword = (password: string, confirm: string) =>
+    password.length >= 6 && password === confirm;
+
+  const canProceed = () => {
+    switch (currentStep) {
+      case "preferredName":
+        return isValidName(formData.preferredName);
+      case "phone":
+        return isValidPhone(formData.phone);
+      case "gender":
+        return Boolean(formData.gender);
+      case "password":
+        return isValidPassword(formData.password, formData.confirmPassword);
+      default:
+        return true;
+    }
+  };
+
+  /* ------------------ MASCARA TELEFONE ------------------ */
+
+  const formatPhone = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 11);
+
+    if (digits.length <= 2) return `(${digits}`;
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+  };
+
+  /* ------------------ SUBMIT ------------------ */
+
   const handleRegister = async () => {
     setLoading(true);
     setError(null);
@@ -49,13 +89,13 @@ export default function Cadastro() {
     try {
       await api.post("/auth/register", {
         nomeSocialApelido: formData.preferredName,
-        telefone: formData.phone,
+        telefone: formData.phone.replace(/\D/g, ""),
         sexo: formData.gender,
         senha: formData.password,
       });
 
       const loginResponse = await api.post("/auth/login", {
-        telefone: formData.phone,
+        telefone: formData.phone.replace(/\D/g, ""),
         senha: formData.password,
       });
 
@@ -72,29 +112,7 @@ export default function Cadastro() {
     }
   };
 
-  const isValidName = (name: string) => /^[A-Za-zÀ-ÿ\s]+$/.test(name.trim());
-  const isValidPhone = (phone: string) => /^\(\d{2}\) \d{5}-\d{4}$/.test(phone);
-  const isValidPassword = (password: string, confirm: string) =>
-    password.length >= 6 && password === confirm;
-
-  const canProceed = () => {
-    switch (currentStep) {
-      case "preferredName":
-        return isValidName(formData.preferredName);
-
-      case "phone":
-        return isValidPhone(formData.phone);
-
-      case "gender":
-        return Boolean(formData.gender);
-
-      case "password":
-        return isValidPassword(formData.password, formData.confirmPassword);
-
-      default:
-        return true;
-    }
-  };
+  /* ------------------ RENDER STEPS ------------------ */
 
   const renderStep = () => {
     switch (currentStep) {
@@ -108,10 +126,9 @@ export default function Cadastro() {
                 <br />
                 Antes de começarmos, quero te conhecer um pouquinho melhor.
                 <br />É bem rapidinho.
-                <p>
-                  {" "}
-                  Já nos conhecemos? <a href="/login">Entrar</a>.
-                </p>
+              </p>
+              <p>
+                Já nos conhecemos? <a href="/login">Entrar</a>
               </p>
             </div>
           </div>
@@ -121,20 +138,17 @@ export default function Cadastro() {
         return (
           <div className="register-info-box">
             <div className="register-info-text">
-              {" "}
               <p>
                 Eu fui criada por médicos especialistas no cuidado da mulher
-                40+,
-                <br />
-                com base na medicina do estilo de vida.
+                40+, com base na medicina do estilo de vida.
               </p>
               <p>
-                Nasci para acompanhar mulheres que estão vivendo uma fase de
-                mudanças — no corpo, na mente e na rotina.
+                Nasci para acompanhar mulheres em uma fase de mudanças — no
+                corpo, na mente e na rotina.
               </p>
               <p>
-                Se você sente que precisa de mais clareza, constância e apoio no
-                dia a dia, você está no lugar certo.
+                Se você busca clareza, constância e apoio, você está no lugar
+                certo.
               </p>
             </div>
           </div>
@@ -154,33 +168,32 @@ export default function Cadastro() {
 
       case "phone":
         return (
-          <div>
+          <>
             <div className="register-info-box">
               <div className="register-info-text">
-                <p>Eu não funciono como um aplicativo comum.</p>
                 <p>
-                  {" "}
-                  Gosto de estar <b>presente</b> no dia a dia, com{" "}
-                  <b>proximidade e cuidado</b>. Por isso, uso o WhatsApp para
-                  conversar com você.
+                  Uso o WhatsApp para estar presente no seu dia a dia, com
+                  proximidade e cuidado.
                 </p>
               </div>
+              <div className="slide-input-group">
+                <label>Seu número de WhatsApp</label>
+                <input
+                  className="slide-input"
+                  placeholder="(XX) XXXXX-XXXX"
+                  inputMode="numeric"
+                  value={formData.phone}
+                  onChange={(e) => update("phone", formatPhone(e.target.value))}
+                />
+              </div>
             </div>
-            <div className="slide-input-group">
-              <label>Seu número de WhatsApp</label>
-              <input
-                className="slide-input"
-                value={formData.phone}
-                onChange={(e) => update("phone", e.target.value)}
-              />
-            </div>
-          </div>
+          </>
         );
 
       case "gender":
         return (
           <div className="slide-input-group">
-            <label>Qual gênero você se identifica?</label>
+            <label>Com qual gênero você se identifica?</label>
             <select
               className="slide-input"
               value={formData.gender}
@@ -195,7 +208,7 @@ export default function Cadastro() {
 
       case "password":
         return (
-          <div>
+          <>
             <div className="slide-input-group">
               <label>Crie uma senha</label>
               <input
@@ -207,7 +220,6 @@ export default function Cadastro() {
             </div>
             <div className="slide-input-group">
               <label>Confirme sua senha</label>
-
               <input
                 type="password"
                 className="slide-input"
@@ -215,7 +227,7 @@ export default function Cadastro() {
                 onChange={(e) => update("confirmPassword", e.target.value)}
               />
             </div>
-          </div>
+          </>
         );
 
       case "confirm":
@@ -223,12 +235,11 @@ export default function Cadastro() {
           <div className="confirm-box">
             <h3>Prontinho</h3>
             <p>
-              Daqui a pouco, eu vou te chamar no WhatsApp. Quero te ouvir com
-              presença, cuidado e sem pressa.
+              Daqui a pouco eu vou te chamar no WhatsApp. Quero te ouvir com
+              presença e cuidado.
             </p>
             <p>
-              Quando você clicar em <b>Criar conta</b>, seguimos juntas com mais
-              consciência e leveza.
+              Ao clicar em <b>Criar conta</b>, seguimos juntas com mais leveza.
             </p>
           </div>
         );
@@ -268,8 +279,8 @@ export default function Cadastro() {
         {stepIndex < steps.length - 1 && (
           <Button
             onClick={next}
-            variant="primary"
             disabled={!canProceed()}
+            variant="primary"
             label={
               currentStep === "welcome"
                 ? "Começar"

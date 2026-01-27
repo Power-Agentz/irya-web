@@ -31,13 +31,13 @@
 .login-image-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 40px;
 }
 .login-image {
-  height: 150px;
+  height: 120px;
   width: auto;
 }
 .login-form {
+  margin-top: 40px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -118,4 +118,7 @@
 .login-link:hover {
   color: var(--secondary);
   text-decoration: underline;
+}
+.login-form > button {
+  margin-top: 20px;
 }
