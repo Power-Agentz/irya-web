@@ -16,7 +16,6 @@
 .questionario-subtitle {
   text-align: left;
   margin-top: -10px;
-  margin-bottom: 15px;
   color: #555;
 }
 
@@ -37,19 +36,16 @@
   padding: 20px;
   border-radius: 6px;
   border: 1px solid #eee;
-  margin-bottom: 20px;
 }
 
 .pilar-title {
   font-size: 1.3rem;
   font-weight: 600;
   color: var(--primary);
-  margin-bottom: 15px;
 }
 
 .pergunta-texto {
   font-size: 1rem;
-  margin-bottom: 20px;
   color: #444;
 }
 
