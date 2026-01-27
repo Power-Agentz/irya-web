@@ -120,7 +120,7 @@ export default function Cadastro() {
         return (
           <div className="register-info-box">
             <div className="register-info-text">
-              <h1>Olá, eu sou a Irya</h1>
+              <h1 tabIndex={0}>Olá, eu sou a Irya</h1>
               <p>
                 Estarei ao seu lado nessa jornada.
                 <br />
