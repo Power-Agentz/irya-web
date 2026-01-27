@@ -40,7 +40,8 @@
   width: auto;
   display: flex;
   flex-direction: column;
-  margin-top: 40px;
+  margin-top: 10px;
+  font-weight: 300;
 }
 .slide-input-group > label {
   font-size: 14px;
@@ -92,7 +93,7 @@
 .register-info-text > p {
   font-size: 14px;
   font-weight: 300;
-  margin: 10px 0 30px;
+  margin: 10px 0;
 }
 .register-info-text a {
   text-decoration: none;
@@ -102,10 +103,9 @@
 .register-image-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 40px;
 }
 .register-image {
-  height: 150px;
+  height: 120px;
   width: auto;
 }
 @media (max-width: 600px) {
@@ -120,6 +120,7 @@
   }
 }
 .progress-bar-container {
+  margin-top: 40px;
   width: 100%;
   height: 6px;
   background: #e6e6e6;

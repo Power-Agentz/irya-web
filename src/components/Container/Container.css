@@ -13,7 +13,7 @@
   overflow: hidden;
 }
 .container-wrapper {
-  padding: 20px 40px;
+  padding: 0px 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
