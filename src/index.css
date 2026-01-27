@@ -9,29 +9,26 @@
   --bg-desktop: url("./assets/bg-desktop.png");
   --bg-mobile: url("./assets/bg-mobile.png");
 }
-#root {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-}
+
 html,
 body {
-  height: 100%;
+  margin: 0;
   font-family: var(--font-headline);
   color: var(--dark);
-  margin: 0;
 }
+
 #root {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background-color: var(--primary-dark);
 }
-input {
+
+input,
+select,
+textarea {
+  font-size: 16px; /* evita zoom no mobile */
   accent-color: var(--primary);
 }
-@media (max-width: 600px) {
-  body,
-  #root {
-    height: 100vh;
-    overflow: hidden;
-  }
-}
+
