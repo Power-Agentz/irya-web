@@ -24,7 +24,7 @@ h2 {
   font-size: 24px;
   font-weight: 600;
   color: var(--primary-dark);
-  margin-top: 20px;
+  margin: 20px 0 0;
 }
 .home-content {
   margin-top: 20px;
@@ -42,9 +42,9 @@ h2 {
 }
 
 .home-actions {
+  margin-top: 50px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
 }
 
 .home-secondary-link {
@@ -54,6 +54,7 @@ h2 {
   font-size: 0.95rem;
   cursor: pointer;
   text-decoration: none;
+  margin-top: 10px;
 }
 
 .home-secondary-link:hover {

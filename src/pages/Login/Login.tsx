@@ -6,6 +6,7 @@ import api from "../../api";
 import Container from "../../components/Container/Container";
 import Button from "../../components/Button/Button";
 import logo from "../../../assets/logo-irya.png";
+import { formatPhone, normalizePhone } from "../../utils/phone";
 
 const Login = () => {
   const [phone, setPhone] = useState<string>("");
@@ -21,7 +22,7 @@ const Login = () => {
       setLoading(true);
       try {
         const response = await api.post("/auth/login", {
-          telefone: phone,
+          telefone: normalizePhone(phone),
           senha: password,
         });
 
@@ -38,7 +39,7 @@ const Login = () => {
         setLoading(false);
       }
     },
-    [phone, password, navigate]
+    [phone, password, navigate],
   );
   console.log("API:", import.meta.env.VITE_API_URL);
 
@@ -52,12 +53,14 @@ const Login = () => {
       <form onSubmit={handleLogin} className="login-form">
         <input
           type="tel"
-          placeholder="Digite seu telefone"
+          inputMode="numeric"
+          placeholder="(XX) XXXXX-XXXX"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={(e) => setPhone(formatPhone(e.target.value))}
           required
           className="login-input"
         />
+
         <input
           type="password"
           placeholder="Digite sua senha"

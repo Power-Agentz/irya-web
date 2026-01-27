@@ -7,6 +7,7 @@ import Container from "../../components/Container/Container";
 import Button from "../../components/Button/Button";
 import logo from "../../../assets/logo-irya.png";
 import { useNavigate } from "react-router-dom";
+import { normalizePhone } from "../../utils/phone";
 
 const steps = [
   "welcome",
@@ -24,6 +25,8 @@ export default function Cadastro() {
   const [stepIndex, setStepIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPhoneConfirm, setShowPhoneConfirm] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   const progress = ((stepIndex + 1) / steps.length) * 100;
@@ -43,8 +46,6 @@ export default function Cadastro() {
 
   const next = () => setStepIndex((s) => Math.min(s + 1, steps.length - 1));
   const back = () => setStepIndex((s) => Math.max(s - 1, 0));
-
-  /* ------------------ VALIDACOES ------------------ */
 
   const isValidName = (name: string) =>
     /^[A-Za-zÀ-ÿ\s]+$/.test(name.trim()) && name.trim().length >= 2;
@@ -69,8 +70,6 @@ export default function Cadastro() {
     }
   };
 
-  /* ------------------ MASCARA TELEFONE ------------------ */
-
   const formatPhone = (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 11);
 
@@ -80,7 +79,13 @@ export default function Cadastro() {
     return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
   };
 
-  /* ------------------ SUBMIT ------------------ */
+  const handleNext = () => {
+    if (currentStep === "phone") {
+      setShowPhoneConfirm(true);
+      return;
+    }
+    next();
+  };
 
   const handleRegister = async () => {
     setLoading(true);
@@ -89,13 +94,13 @@ export default function Cadastro() {
     try {
       await api.post("/auth/register", {
         nomeSocialApelido: formData.preferredName,
-        telefone: formData.phone.replace(/\D/g, ""),
+        telefone: normalizePhone(formData.phone),
         sexo: formData.gender,
         senha: formData.password,
       });
 
       const loginResponse = await api.post("/auth/login", {
-        telefone: formData.phone.replace(/\D/g, ""),
+        telefone: normalizePhone(formData.phone),
         senha: formData.password,
       });
 
@@ -112,20 +117,18 @@ export default function Cadastro() {
     }
   };
 
-  /* ------------------ RENDER STEPS ------------------ */
-
   const renderStep = () => {
     switch (currentStep) {
       case "welcome":
         return (
           <div className="register-info-box">
             <div className="register-info-text">
-              <h1 tabIndex={0}>Olá, eu sou a Irya</h1>
+              <h1>Olá, eu sou a Irya</h1>
               <p>
                 Estarei ao seu lado nessa jornada.
                 <br />
-                Antes de começarmos, quero te conhecer um pouquinho melhor.
-                <br />É bem rapidinho.
+                Antes de começarmos, quero te conhecer um pouquinho melhor.É bem
+                rapidinho.
               </p>
               <p>
                 Já nos conhecemos? <a href="/login">Entrar</a>
@@ -270,6 +273,33 @@ export default function Cadastro() {
       </AnimatePresence>
 
       {error && <p className="error-msg">{error}</p>}
+      {showPhoneConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <p>
+              Você digitou o número <b>{formData.phone}</b>.
+              <br />
+              Está correto?
+            </p>
+
+            <div className="modal-actions">
+              <Button
+                label="Corrigir"
+                variant="secondary"
+                onClick={() => setShowPhoneConfirm(false)}
+              />
+              <Button
+                label="Sim, continuar"
+                variant="primary"
+                onClick={() => {
+                  setShowPhoneConfirm(false);
+                  next();
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="wizard-buttons">
         {stepIndex > 0 && (
@@ -278,7 +308,7 @@ export default function Cadastro() {
 
         {stepIndex < steps.length - 1 && (
           <Button
-            onClick={next}
+            onClick={handleNext}
             disabled={!canProceed()}
             variant="primary"
             label={
