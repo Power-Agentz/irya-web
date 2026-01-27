@@ -255,8 +255,8 @@ export default function Cadastro() {
         <img src={logo} alt="Irya Logo" className="register-image" />
       </div>
 
-      <div className="progress-bar-container">
-        <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
+      <div className="register-progress-bar-container">
+        <div className="register-progress-bar-fill" style={{ width: `${progress}%` }} />
       </div>
 
       <AnimatePresence mode="wait">
@@ -266,7 +266,7 @@ export default function Cadastro() {
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -100, opacity: 0 }}
           transition={{ duration: 0.35 }}
-          className="slide-wrapper"
+          className="register-slide-wrapper"
         >
           {renderStep()}
         </motion.div>
@@ -301,7 +301,7 @@ export default function Cadastro() {
         </div>
       )}
 
-      <div className="wizard-buttons">
+      <div className="register-buttons">
         {stepIndex > 0 && (
           <Button onClick={back} label="Voltar" variant="secondary" />
         )}

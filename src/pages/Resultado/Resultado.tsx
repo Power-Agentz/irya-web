@@ -93,6 +93,7 @@ const Resultado: React.FC = () => {
   if (error || !resultadoData) {
     return (
       <Container>
+        <BackButton />
         <h1 className="non-resultados-title">Sem resultados disponíveis</h1>
         <p className="non-resultados-description">
           Você ainda não concluiu o questionário ou não há resultados para
