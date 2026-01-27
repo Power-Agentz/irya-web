@@ -147,6 +147,14 @@
   transform: translateY(-1px);
 }
 
+.non-resultados-title {
+  margin-top: 40px;
+  font-size: 24px;
+  color: var(--primary);
+}
+.non-resultados-description {
+  font-size: 16px;
+} 
 /* Responsividade para Tabela */
 @media (max-width: 600px) {
   .pillar-details-table table {

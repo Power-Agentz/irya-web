@@ -44,7 +44,7 @@ const Resultado: React.FC = () => {
   const navigate = useNavigate();
   const { questionarioId } = useParams();
   const [resultadoData, setResultadoData] = useState<ResultadoData | null>(
-    null
+    null,
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -93,8 +93,8 @@ const Resultado: React.FC = () => {
   if (error || !resultadoData) {
     return (
       <Container>
-        <h1>Sem resultados disponíveis</h1>
-        <p>
+        <h1 className="non-resultados-title">Sem resultados disponíveis</h1>
+        <p className="non-resultados-description">
           Você ainda não concluiu o questionário ou não há resultados para
           exibir.
         </p>
