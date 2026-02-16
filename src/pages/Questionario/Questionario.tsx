@@ -40,15 +40,18 @@ const Questionario: React.FC = () => {
       pilar.perguntas.map((pergunta) => ({
         ...pergunta,
         pilarNome: pilar.nomePilar,
-      }))
+      })),
     );
   }, [pilaresData]);
 
   const questionMap: Record<number, Pergunta> = useMemo(() => {
-    return allQuestions.reduce((acc, q) => {
-      acc[q.id] = q;
-      return acc;
-    }, {} as Record<number, Pergunta>);
+    return allQuestions.reduce(
+      (acc, q) => {
+        acc[q.id] = q;
+        return acc;
+      },
+      {} as Record<number, Pergunta>,
+    );
   }, [allQuestions]);
 
   const totalQuestions = allQuestions.length;
@@ -62,7 +65,7 @@ const Questionario: React.FC = () => {
         setPilaresData(response.data);
       } catch (err: any) {
         setError(
-          "Falha ao carregar o questionário. Tente fazer login novamente."
+          "Falha ao carregar o questionário. Tente fazer login novamente.",
         );
         console.error("Erro ao buscar estrutura:", err);
       } finally {
@@ -96,7 +99,7 @@ const Questionario: React.FC = () => {
         [perguntaId]: score,
       }));
     },
-    []
+    [],
   );
 
   const handleSubmit = useCallback(
@@ -117,7 +120,7 @@ const Questionario: React.FC = () => {
 
           if (!questionMeta) {
             console.error(
-              `Metadado de pergunta não encontrado para ID: ${perguntaId}`
+              `Metadado de pergunta não encontrado para ID: ${perguntaId}`,
             );
             return null;
           }
@@ -132,7 +135,7 @@ const Questionario: React.FC = () => {
 
       if (submissionData.length !== totalQuestions) {
         setError(
-          "Erro na montagem do payload. Verifique se todas as perguntas foram carregadas corretamente."
+          "Erro na montagem do payload. Verifique se todas as perguntas foram carregadas corretamente.",
         );
         setLoading(false);
         return;
@@ -146,13 +149,13 @@ const Questionario: React.FC = () => {
         console.error("Erro ao submeter questionário:", err);
         setError(
           err.response?.data?.error ||
-            "Falha ao enviar respostas. Verifique a conexão do servidor."
+            "Falha ao enviar respostas. Verifique a conexão do servidor.",
         );
       } finally {
         setLoading(false);
       }
     },
-    [answers, totalQuestions, navigate, questionMap]
+    [answers, totalQuestions, navigate, questionMap],
   );
 
   if (loading) {
@@ -167,30 +170,51 @@ const Questionario: React.FC = () => {
     ((currentQuestionIndex + 1) / totalQuestions) * 100;
   const isCurrentAnswered = answers[currentQuestion.id] !== undefined;
 
+  const getMotivationalText = (progress: number) => {
+    if (progress <= 0.2) {
+      return "Você está cuidando de você.";
+    }
+
+    if (progress <= 0.4) {
+      return "Estamos entendendo sua rotina.";
+    }
+
+    if (progress <= 0.75) {
+      return "Seu plano está tomando forma.";
+    }
+
+    if (progress < 1) {
+      return "Estamos finalizando tudo para você.";
+    }
+
+    return "Pronto. Agora é com você.";
+  };
+
+  const progress = (currentQuestionIndex + 1) / totalQuestions;
+  const motivationalText = getMotivationalText(progress);
+
+  <p className="questionario-subtitle">{motivationalText}</p>;
+
   return (
     <Container>
       <BackButton />
       <h1 className="login-title">Ritual de Florescimento</h1>
 
       <p className="questionario-subtitle">
-        Progresso: {currentQuestionIndex + 1} de {totalQuestions}
+        <em>{motivationalText}</em>
       </p>
-
       <div className="progress-bar-container">
         <div
           className="progress-bar"
           style={{ width: `${progressPercentage}%` }}
         ></div>
       </div>
-
       <form onSubmit={handleSubmit} className="login-form">
         {currentQuestion && (
           <section key={currentQuestion.id} className="pergunta-card">
             <h2 className="pilar-title">{currentQuestion.pilarNome}</h2>
 
-            <p className="pergunta-texto">
-              {currentQuestion.ordem}. {currentQuestion.textoPergunta}
-            </p>
+            <p className="pergunta-texto">{currentQuestion.textoPergunta}</p>
 
             <div className="options-group">
               {[1, 2, 3].map((score) => (
@@ -207,8 +231,9 @@ const Questionario: React.FC = () => {
                   />
                   <span>
                     {score === 1 && "Nunca"}
-                    {score === 2 && "Às vezes"}
-                    {score === 3 && "Frequentemente"}
+                    {score === 2 && "Às vezes (até dois dias na semana)"}
+                    {score === 3 &&
+                      "Frequentemente (três ou mais dias na semana)"}
                   </span>
                 </label>
               ))}

@@ -47,15 +47,21 @@
 .pergunta-texto {
   font-size: 1rem;
   color: #444;
+  font-weight: 700;
 }
 
 .options-group {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  font-weight: 300;
 }
 
 .nav-button {
   background-color: var(--secondary);
   margin-top: 10px;
+}
+.navigation-controls {
+  display: flex;
+  gap: 10px;
 }
