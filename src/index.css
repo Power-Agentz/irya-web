@@ -1,36 +1,33 @@
-:root {
-  --primary: #87967a;
-  --primary-dark: #6e7f61;
-  --secondary: #efbd32;
-  --irya-white: #f6f4ef;
-  --third: #963149;
-  --white: #fefefe;
+@import "tailwindcss";
+
+@theme {
   --font-headline: "Montserrat", sans-serif;
-  --bg-desktop: url("./assets/bg-desktop.png");
-  --bg-mobile: url("./assets/bg-mobile.png");
 }
 
-html,
-body {
-  margin: 0;
-  font-family: var(--font-headline);
-  color: var(--dark);
-  height: 100%;
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-headline);
+    color: #333333;
+    background:
+      radial-gradient(1200px 600px at 8% -10%, rgba(175, 195, 158, 0.35), transparent 60%),
+      radial-gradient(900px 540px at 95% 20%, rgba(211, 185, 137, 0.2), transparent 65%),
+      linear-gradient(180deg, #718364 0%, #6b7d5f 40%, #64765a 100%);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+    accent-color: #87967a;
+  }
 }
-
-
-#root {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  align-items: center;
-  background-color: var(--primary-dark);
-}
-
-input,
-select,
-textarea {
-  font-size: 16px; /* evita zoom no mobile */
-  accent-color: var(--primary);
-}
-

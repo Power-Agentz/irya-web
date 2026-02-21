@@ -1,89 +1,192 @@
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import "../../components/Container/Container.css";
-import "./Cadastro.css";
-import api from "../../api";
 import Container from "../../components/Container/Container";
 import Button from "../../components/Button/Button";
-import logo from "../../../assets/logo-irya.png";
-import { useNavigate } from "react-router-dom";
-import { normalizePhone } from "../../utils/phone";
+import BrandLogo from "../../components/BrandLogo/BrandLogo";
+import { useNavigate, Link } from "react-router-dom";
+import { formatPhone, normalizePhone } from "../../utils/phone";
+import { useAuth } from "../../hooks/useAuth";
+import TextField from "../../components/TextField/TextField";
+import { getApiErrorMessage } from "../../utils/errors";
 
 const steps = [
   "welcome",
   "manifesto",
-  "preferredName",
+  "fullName",
   "phone",
-  "gender",
   "password",
   "confirm",
 ] as const;
 
 type Step = (typeof steps)[number];
+type PhoneStatus = "idle" | "checking" | "available" | "taken" | "error";
+
+const PHONE_STEP_INDEX = steps.indexOf("phone");
 
 export default function Cadastro() {
   const [stepIndex, setStepIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [stepError, setStepError] = useState<string | null>(null);
   const [showPhoneConfirm, setShowPhoneConfirm] = useState<boolean>(false);
+  const [phoneStatus, setPhoneStatus] = useState<PhoneStatus>("idle");
+  const [lastCheckedPhone, setLastCheckedPhone] = useState<string>("");
 
   const navigate = useNavigate();
+  const { registerAndLogin, checkTelefoneDisponivel } = useAuth();
 
   const progress = ((stepIndex + 1) / steps.length) * 100;
   const currentStep: Step = steps[stepIndex];
 
   const [formData, setFormData] = useState({
-    preferredName: "",
+    fullName: "",
     phone: "",
-    gender: "Feminino",
     password: "",
     confirmPassword: "",
   });
 
   const update = (field: keyof typeof formData, value: string) => {
+    setStepError(null);
+    setError(null);
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const next = () => setStepIndex((s) => Math.min(s + 1, steps.length - 1));
-  const back = () => setStepIndex((s) => Math.max(s - 1, 0));
+  const next = () => {
+    setStepError(null);
+    setStepIndex((s) => Math.min(s + 1, steps.length - 1));
+  };
+
+  const back = () => {
+    setStepError(null);
+    setStepIndex((s) => Math.max(s - 1, 0));
+  };
 
   const isValidName = (name: string) =>
-    /^[A-Za-zÀ-ÿ\s]+$/.test(name.trim()) && name.trim().length >= 2;
+    /^[A-Za-z\u00C0-\u00FF\s]+$/.test(name.trim()) && name.trim().length >= 2;
 
   const isValidPhone = (phone: string) => /^\(\d{2}\) \d{5}-\d{4}$/.test(phone);
 
-  const isValidPassword = (password: string, confirm: string) =>
-    password.length >= 6 && password === confirm;
+  const isValidPasswordLength = (password: string) => password.length >= 6;
+
+  const isPasswordMatch = (password: string, confirm: string) =>
+    password === confirm;
+
+  const normalizedPhone = useMemo(
+    () => normalizePhone(formData.phone),
+    [formData.phone],
+  );
+
+  const validatePhoneAvailability = useCallback(
+    async (phoneDigits: string): Promise<boolean> => {
+      try {
+        setPhoneStatus("checking");
+        const disponivel = await checkTelefoneDisponivel(phoneDigits);
+        setLastCheckedPhone(phoneDigits);
+        setPhoneStatus(disponivel ? "available" : "taken");
+        return disponivel;
+      } catch {
+        setLastCheckedPhone(phoneDigits);
+        setPhoneStatus("error");
+        return false;
+      }
+    },
+    [checkTelefoneDisponivel],
+  );
+
+  useEffect(() => {
+    if (currentStep !== "phone") return;
+
+    if (!isValidPhone(formData.phone)) {
+      setPhoneStatus("idle");
+      setLastCheckedPhone("");
+      return;
+    }
+
+    if (normalizedPhone === lastCheckedPhone && phoneStatus !== "checking") {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      void validatePhoneAvailability(normalizedPhone);
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [
+    currentStep,
+    formData.phone,
+    lastCheckedPhone,
+    normalizedPhone,
+    phoneStatus,
+    validatePhoneAvailability,
+  ]);
 
   const canProceed = () => {
     switch (currentStep) {
-      case "preferredName":
-        return isValidName(formData.preferredName);
+      case "fullName":
+        return isValidName(formData.fullName);
       case "phone":
-        return isValidPhone(formData.phone);
-      case "gender":
-        return Boolean(formData.gender);
+        return (
+          isValidPhone(formData.phone) &&
+          phoneStatus !== "checking" &&
+          phoneStatus !== "error" &&
+          phoneStatus !== "taken"
+        );
       case "password":
-        return isValidPassword(formData.password, formData.confirmPassword);
+        return (
+          isValidPasswordLength(formData.password) &&
+          isPasswordMatch(formData.password, formData.confirmPassword)
+        );
       default:
         return true;
     }
   };
 
-  const formatPhone = (value: string) => {
-    const digits = value.replace(/\D/g, "").slice(0, 11);
+  const handleNext = async () => {
+    setStepError(null);
 
-    if (digits.length <= 2) return `(${digits}`;
-    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    if (currentStep === "fullName" && !isValidName(formData.fullName)) {
+      setStepError("Digite seu nome completo com pelo menos 2 caracteres.");
+      return;
+    }
 
-    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
-  };
-
-  const handleNext = () => {
     if (currentStep === "phone") {
+      if (!isValidPhone(formData.phone)) {
+        setStepError("Digite um telefone válido no formato (XX) XXXXX-XXXX.");
+        return;
+      }
+
+      const isCurrentPhoneAlreadyChecked =
+        normalizedPhone === lastCheckedPhone && phoneStatus !== "checking";
+
+      const isDisponivel = isCurrentPhoneAlreadyChecked
+        ? phoneStatus === "available"
+        : await validatePhoneAvailability(normalizedPhone);
+
+      if (!isDisponivel) {
+        setStepError(
+          phoneStatus === "taken"
+            ? "Este telefone já está cadastrado. Faça login ou use outro número."
+            : "Não foi possível validar o telefone agora. Tente novamente.",
+        );
+        return;
+      }
+
       setShowPhoneConfirm(true);
       return;
     }
+
+    if (currentStep === "password") {
+      if (!isValidPasswordLength(formData.password)) {
+        setStepError("A senha deve ter pelo menos 6 caracteres.");
+        return;
+      }
+
+      if (!isPasswordMatch(formData.password, formData.confirmPassword)) {
+        setStepError("As senhas não conferem. Revise e tente novamente.");
+        return;
+      }
+    }
+
     next();
   };
 
@@ -92,46 +195,123 @@ export default function Cadastro() {
     setError(null);
 
     try {
-      await api.post("/auth/register", {
-        nomeSocialApelido: formData.preferredName,
-        telefone: normalizePhone(formData.phone),
-        sexo: formData.gender,
+      await registerAndLogin({
+        nomeCompleto: formData.fullName,
+        telefone: normalizedPhone,
         senha: formData.password,
       });
-
-      const loginResponse = await api.post("/auth/login", {
-        telefone: normalizePhone(formData.phone),
-        senha: formData.password,
-      });
-
-      const { token, paciente } = loginResponse.data;
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("pacienteData", JSON.stringify(paciente));
 
       navigate("/inicio");
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Erro inesperado.");
+    } catch (err: unknown) {
+      const message = getApiErrorMessage(
+        err,
+        "Erro inesperado ao criar conta.",
+      );
+      setError(message);
+
+      if (
+        message.toLowerCase().includes("telefone") &&
+        message.toLowerCase().includes("cadastrado")
+      ) {
+        setStepIndex(PHONE_STEP_INDEX);
+        setStepError(
+          "Este telefone já está cadastrado. Faça login ou use outro número.",
+        );
+        setPhoneStatus("taken");
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const renderStepFeedback = () => {
+    if (currentStep === "phone") {
+      if (phoneStatus === "checking") {
+        return <p className="text-sm text-[#6d7565]">Validando telefone...</p>;
+      }
+
+      if (phoneStatus === "available" && isValidPhone(formData.phone)) {
+        return <p className="text-sm text-[#4f7b4f]">Telefone disponível.</p>;
+      }
+
+      if (phoneStatus === "taken") {
+        return (
+          <p className="text-sm text-[#b00020]">
+            Este telefone já está cadastrado. Faça login ou use outro número.
+          </p>
+        );
+      }
+
+      if (phoneStatus === "error") {
+        return (
+          <p className="text-sm text-[#b00020]">
+            Não foi possível validar o telefone agora. Tente novamente.
+          </p>
+        );
+      }
+    }
+
+    if (currentStep === "password") {
+      if (
+        formData.password.length > 0 &&
+        !isValidPasswordLength(formData.password)
+      ) {
+        return (
+          <p className="text-sm text-[#b00020]">
+            A senha deve ter pelo menos 6 caracteres.
+          </p>
+        );
+      }
+
+      if (
+        formData.confirmPassword.length > 0 &&
+        !isPasswordMatch(formData.password, formData.confirmPassword)
+      ) {
+        return (
+          <p className="text-sm text-[#b00020]">As senhas não conferem.</p>
+        );
+      }
+
+      if (
+        isValidPasswordLength(formData.password) &&
+        isPasswordMatch(formData.password, formData.confirmPassword) &&
+        formData.confirmPassword.length > 0
+      ) {
+        return (
+          <p className="text-sm text-[#4f7b4f]">
+            Senha confirmada com sucesso.
+          </p>
+        );
+      }
+    }
+
+    return null;
   };
 
   const renderStep = () => {
     switch (currentStep) {
       case "welcome":
         return (
-          <div className="register-info-box">
-            <div className="register-info-text">
-              <h1>Olá, eu sou a Irya</h1>
+          <div className="flex min-h-[180px] flex-col justify-center">
+            <div className="space-y-3 text-[15px] font-light sm:text-base">
+              <h1 className="text-xl font-medium text-[#3f4c36] sm:text-3xl flex items-center gap-0.5">
+                Bem-vindo ao Portal Irya <span className="text-xs">©</span>
+              </h1>
               <p>
-                Estarei ao seu lado nessa jornada.
+                Esse é o seu hub de experiências conectadas da{" "}
+                <b className="font-bold">Irya</b>.
                 <br />
-                Antes de começarmos, quero te conhecer um pouquinho melhor.É bem
-                rapidinho.
+                Antes de começarmos, vou precisar de algumas informações
+                básicas.
               </p>
               <p>
-                Já nos conhecemos? <a href="/login">Entrar</a>
+                Já possui conta?{" "}
+                <Link
+                  to="/login"
+                  className="font-semibold text-[#87967a] hover:underline"
+                >
+                  Entrar
+                </Link>
               </p>
             </div>
           </div>
@@ -139,14 +319,14 @@ export default function Cadastro() {
 
       case "manifesto":
         return (
-          <div className="register-info-box">
-            <div className="register-info-text">
+          <div className="flex min-h-[180px] flex-col justify-center">
+            <div className="space-y-3 text-[15px] font-light sm:text-base">
               <p>
                 Eu fui criada por médicos especialistas no cuidado da mulher
                 40+, com base na medicina do estilo de vida.
               </p>
               <p>
-                Nasci para acompanhar mulheres em uma fase de mudanças — no
+                Nasci para acompanhar mulheres em uma fase de mudanças, no
                 corpo, na mente e na rotina.
               </p>
               <p>
@@ -157,91 +337,71 @@ export default function Cadastro() {
           </div>
         );
 
-      case "preferredName":
+      case "fullName":
         return (
-          <div className="slide-input-group">
-            <label>Como posso te chamar?</label>
-            <input
-              className="slide-input"
-              value={formData.preferredName}
-              onChange={(e) => update("preferredName", e.target.value)}
-            />
-          </div>
+          <TextField
+            label="Nome completo"
+            value={formData.fullName}
+            onChange={(e) => update("fullName", e.target.value)}
+            className="mt-1"
+          />
         );
 
       case "phone":
         return (
-          <>
-            <div className="register-info-box">
-              <div className="register-info-text">
-                <p>
-                  Uso o WhatsApp para estar presente no seu dia a dia, com
-                  proximidade e cuidado.
-                </p>
-              </div>
-              <div className="slide-input-group">
-                <label>Seu número de WhatsApp</label>
-                <input
-                  className="slide-input"
-                  placeholder="(XX) XXXXX-XXXX"
-                  inputMode="numeric"
-                  value={formData.phone}
-                  onChange={(e) => update("phone", formatPhone(e.target.value))}
-                />
-              </div>
-            </div>
-          </>
-        );
-
-      case "gender":
-        return (
-          <div className="slide-input-group">
-            <label>Com qual gênero você se identifica?</label>
-            <select
-              className="slide-input"
-              value={formData.gender}
-              onChange={(e) => update("gender", e.target.value)}
-            >
-              <option value="Feminino">Feminino</option>
-              <option value="Masculino">Masculino</option>
-              <option value="Outro">Outro</option>
-            </select>
+          <div className="space-y-4">
+            <p className="text-[15px] font-light sm:text-base">
+              Uso o WhatsApp para estar presente no seu dia a dia, com
+              proximidade e cuidado.
+            </p>
+            <TextField
+              label="Seu número de WhatsApp"
+              className="mt-1"
+              placeholder="(XX) XXXXX-XXXX"
+              inputMode="numeric"
+              value={formData.phone}
+              onChange={(e) => {
+                const value = formatPhone(e.target.value);
+                if (value !== formData.phone) {
+                  setPhoneStatus("idle");
+                  setLastCheckedPhone("");
+                }
+                update("phone", value);
+              }}
+            />
           </div>
         );
 
       case "password":
         return (
-          <>
-            <div className="slide-input-group">
-              <label>Crie uma senha</label>
-              <input
-                type="password"
-                className="slide-input"
-                value={formData.password}
-                onChange={(e) => update("password", e.target.value)}
-              />
-            </div>
-            <div className="slide-input-group">
-              <label>Confirme sua senha</label>
-              <input
-                type="password"
-                className="slide-input"
-                value={formData.confirmPassword}
-                onChange={(e) => update("confirmPassword", e.target.value)}
-              />
-            </div>
-          </>
+          <div className="space-y-4">
+            <TextField
+              type="password"
+              label="Crie uma senha"
+              className="mt-1"
+              value={formData.password}
+              onChange={(e) => update("password", e.target.value)}
+            />
+            <TextField
+              type="password"
+              label="Confirme sua senha"
+              className="mt-1"
+              value={formData.confirmPassword}
+              onChange={(e) => update("confirmPassword", e.target.value)}
+            />
+          </div>
         );
 
       case "confirm":
         return (
-          <div className="confirm-box">
-            <h3>Prontinho</h3>
-            <p>
-              Daqui a pouco eu vou te chamar no WhatsApp. Quero te ouvir com
-              presença e cuidado.
+          <div className="space-y-3">
+            <h3 className="text-xl font-semibold text-[#3f4c36]">Prontinho!</h3>
+            <p className="text-[15px] font-light sm:text-base">
+              Agora você terá acesso ao Portal Irya, aqui você vai acompanhar o
+              seu progresso e entender como estamos juntas atingindo os seus
+              objetivos.
             </p>
-            <p>
+            <p className="text-[15px] font-light sm:text-base">
               Ao clicar em <b>Criar conta</b>, seguimos juntas com mais leveza.
             </p>
           </div>
@@ -251,84 +411,114 @@ export default function Cadastro() {
 
   return (
     <Container hasHeader={false}>
-      <div className="register-image-container">
-        <img src={logo} alt="Irya Logo" className="register-image" />
+      <div className="mx-auto flex w-full max-w-[620px] flex-1 flex-col justify-center py-2 sm:py-4">
+        <BrandLogo className="mb-4 sm:mb-6" />
+
+        <div className="rounded-xl bg-white/72 p-4 border border-white/70 shadow-[0_14px_34px_rgba(24,28,20,0.12)] backdrop-blur-md sm:p-6">
+          <div className="mb-6 h-2 w-full overflow-hidden rounded-full bg-[#d7dccf]">
+            <div
+              className="h-full rounded-full bg-[#87967a] transition-[width] duration-300"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ x: 40, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -40, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="min-h-[200px]"
+            >
+              {renderStep()}
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="mt-3 min-h-5">{renderStepFeedback()}</div>
+
+          {stepError && (
+            <p className="mt-3 rounded-lg border border-[#f5c2c2] bg-[#ffebee] p-3 text-sm text-[#b00020]">
+              {stepError}
+            </p>
+          )}
+
+          {error && (
+            <p className="mt-3 rounded-lg border border-[#f5c2c2] bg-[#ffebee] p-3 text-sm text-[#b00020]">
+              {error}
+            </p>
+          )}
+
+          <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            {stepIndex > 0 && (
+              <Button
+                onClick={back}
+                label="Voltar"
+                variant="secondary"
+                fullWidth={false}
+                className="sm:min-w-[120px]"
+              />
+            )}
+
+            {stepIndex < steps.length - 1 && (
+              <Button
+                onClick={() => void handleNext()}
+                disabled={!canProceed()}
+                variant="primary"
+                label={
+                  currentStep === "welcome"
+                    ? "Iniciar"
+                    : currentStep === "manifesto"
+                      ? "Quero continuar"
+                      : "Próximo"
+                }
+                fullWidth={false}
+                className="sm:min-w-[180px]"
+              />
+            )}
+
+            {stepIndex === steps.length - 1 && (
+              <Button
+                onClick={handleRegister}
+                label={loading ? "Criando..." : "Criar conta"}
+                variant="primary"
+                fullWidth={false}
+                className="sm:min-w-[180px]"
+              />
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="register-progress-bar-container">
-        <div className="register-progress-bar-fill" style={{ width: `${progress}%` }} />
-      </div>
-
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentStep}
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -100, opacity: 0 }}
-          transition={{ duration: 0.35 }}
-          className="register-slide-wrapper"
-        >
-          {renderStep()}
-        </motion.div>
-      </AnimatePresence>
-
-      {error && <p className="error-msg">{error}</p>}
       {showPhoneConfirm && (
-        <div className="modal-overlay">
-          <div className="modal-box">
-            <p>
-              Você digitou o número <b>{formData.phone}</b>.
+        <div className="fixed inset-0 z-[999] flex items-end justify-center bg-black/45 p-3 sm:items-center sm:p-6">
+          <div className="w-full max-w-[360px] rounded-2xl bg-white p-5 text-center shadow-xl sm:p-6">
+            <p className="text-sm sm:text-base">
+              Você digitou o número: <b>{formData.phone}</b>.
               <br />
               Está correto?
             </p>
 
-            <div className="modal-actions">
+            <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:justify-center">
               <Button
                 label="Corrigir"
                 variant="secondary"
                 onClick={() => setShowPhoneConfirm(false)}
+                className="sm:min-w-[120px]"
               />
               <Button
-                label="Sim, continuar"
+                label="Sim"
                 variant="primary"
                 onClick={() => {
                   setShowPhoneConfirm(false);
                   next();
                 }}
+                className="sm:min-w-[150px]"
               />
             </div>
           </div>
         </div>
       )}
-
-      <div className="register-buttons">
-        {stepIndex > 0 && (
-          <Button onClick={back} label="Voltar" variant="secondary" />
-        )}
-
-        {stepIndex < steps.length - 1 && (
-          <Button
-            onClick={handleNext}
-            disabled={!canProceed()}
-            variant="primary"
-            label={
-              currentStep === "welcome"
-                ? "Começar"
-                : currentStep === "manifesto"
-                  ? "Quero continuar"
-                  : "Próximo"
-            }
-          />
-        )}
-
-        {stepIndex === steps.length - 1 && (
-          <Button
-            onClick={handleRegister}
-            label={loading ? "Criando..." : "Criar conta"}
-            variant="primary"
-          />
-        )}
-      </div>
     </Container>
   );
 }

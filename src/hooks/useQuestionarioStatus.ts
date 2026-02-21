@@ -1,9 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "../api";
+
+export interface DetalhePilar {
+  nome: string;
+  pontuacaoObtida: number;
+  pontuacaoMaxima: number;
+  percentualPilar: number;
+}
+
+export interface ResultadoData {
+  questionarioId: number;
+  dataConclusao: string;
+  dataLimite?: string;
+  pontuacaoTotal: number;
+  percentualGlobal: number;
+  classificacao: string;
+  detalhesPilares: DetalhePilar[];
+}
 
 interface QuestionarioStatus {
   podeResponder: boolean;
-  resultadoAnterior: any | null;
+  resultadoAnterior: ResultadoData | null;
+  pesoAtualKg: number | null;
+  variacaoPesoKg: number | null;
 }
 
 export const useQuestionarioStatus = () => {
@@ -11,20 +30,24 @@ export const useQuestionarioStatus = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        const response = await api.get("/questionario/status");
-        setStatus(response.data);
-      } catch {
-        setError("Erro ao verificar status do questionário.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchStatus = useCallback(async () => {
+    setLoading(true);
+    setError("");
 
-    fetchStatus();
+    try {
+      const response = await api.get<QuestionarioStatus>("/questionario/status");
+      setStatus(response.data);
+    } catch {
+      setError("Erro ao verificar status do questionário.");
+      setStatus(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  return { status, loading, error };
+  useEffect(() => {
+    fetchStatus();
+  }, [fetchStatus]);
+
+  return { status, loading, error, refetch: fetchStatus };
 };
