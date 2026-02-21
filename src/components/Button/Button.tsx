@@ -1,3 +1,5 @@
+import LoadingIcon from "../LoadingIcon/LoadingIcon";
+
 interface ButtonProps {
   variant: "primary" | "secondary";
   onClick?: () => void;
@@ -6,6 +8,7 @@ interface ButtonProps {
   disabled?: boolean;
   className?: string;
   fullWidth?: boolean;
+  loading?: boolean;
 }
 
 const baseClasses =
@@ -26,15 +29,23 @@ const Button = ({
   disabled = false,
   className = "",
   fullWidth = true,
+  loading = false,
 }: ButtonProps) => {
   return (
     <button
       onClick={onClick}
       type={type}
-      disabled={disabled}
+      disabled={disabled || loading}
       className={`${baseClasses} ${variantClasses[variant]} ${fullWidth ? "w-full" : "w-auto"} ${className}`.trim()}
     >
-      {label}
+      {loading ? (
+        <span className="inline-flex items-center gap-2">
+          <LoadingIcon size="sm" className="text-current" />
+          <span>{label}</span>
+        </span>
+      ) : (
+        label
+      )}
     </button>
   );
 };

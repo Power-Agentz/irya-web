@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 import Container from "../../components/Container/Container";
 import Button from "../../components/Button/Button";
 import BrandLogo from "../../components/BrandLogo/BrandLogo";
@@ -8,6 +9,7 @@ import { formatPhone, normalizePhone } from "../../utils/phone";
 import { useAuth } from "../../hooks/useAuth";
 import TextField from "../../components/TextField/TextField";
 import { getApiErrorMessage } from "../../utils/errors";
+import LoadingIcon from "../../components/LoadingIcon/LoadingIcon";
 
 const steps = [
   "welcome",
@@ -20,6 +22,7 @@ const steps = [
 
 type Step = (typeof steps)[number];
 type PhoneStatus = "idle" | "checking" | "available" | "taken" | "error";
+type PhoneAvailabilityResult = "available" | "taken" | "error";
 
 const PHONE_STEP_INDEX = steps.indexOf("phone");
 
@@ -77,17 +80,18 @@ export default function Cadastro() {
   );
 
   const validatePhoneAvailability = useCallback(
-    async (phoneDigits: string): Promise<boolean> => {
+    async (phoneDigits: string): Promise<PhoneAvailabilityResult> => {
       try {
         setPhoneStatus("checking");
         const disponivel = await checkTelefoneDisponivel(phoneDigits);
         setLastCheckedPhone(phoneDigits);
-        setPhoneStatus(disponivel ? "available" : "taken");
-        return disponivel;
+        const result: PhoneAvailabilityResult = disponivel ? "available" : "taken";
+        setPhoneStatus(result);
+        return result;
       } catch {
         setLastCheckedPhone(phoneDigits);
         setPhoneStatus("error");
-        return false;
+        return "error";
       }
     },
     [checkTelefoneDisponivel],
@@ -158,13 +162,17 @@ export default function Cadastro() {
       const isCurrentPhoneAlreadyChecked =
         normalizedPhone === lastCheckedPhone && phoneStatus !== "checking";
 
-      const isDisponivel = isCurrentPhoneAlreadyChecked
+      const availabilityResult: PhoneAvailabilityResult = isCurrentPhoneAlreadyChecked
         ? phoneStatus === "available"
+          ? "available"
+          : phoneStatus === "taken"
+            ? "taken"
+            : "error"
         : await validatePhoneAvailability(normalizedPhone);
 
-      if (!isDisponivel) {
+      if (availabilityResult !== "available") {
         setStepError(
-          phoneStatus === "taken"
+          availabilityResult === "taken"
             ? "Este telefone já está cadastrado. Faça login ou use outro número."
             : "Não foi possível validar o telefone agora. Tente novamente.",
         );
@@ -209,10 +217,12 @@ export default function Cadastro() {
       );
       setError(message);
 
-      if (
-        message.toLowerCase().includes("telefone") &&
-        message.toLowerCase().includes("cadastrado")
-      ) {
+      const isTelefoneConflito =
+        axios.isAxiosError(err) &&
+        err.response?.status === 409 &&
+        message.toLowerCase().includes("telefone");
+
+      if (isTelefoneConflito) {
         setStepIndex(PHONE_STEP_INDEX);
         setStepError(
           "Este telefone já está cadastrado. Faça login ou use outro número.",
@@ -227,7 +237,12 @@ export default function Cadastro() {
   const renderStepFeedback = () => {
     if (currentStep === "phone") {
       if (phoneStatus === "checking") {
-        return <p className="text-sm text-[#6d7565]">Validando telefone...</p>;
+        return (
+          <p className="inline-flex items-center gap-2 text-sm text-[#6d7565]">
+            <LoadingIcon size="sm" className="text-[#6d7565]" />
+            <span>Validando telefone...</span>
+          </p>
+        );
       }
 
       if (phoneStatus === "available" && isValidPhone(formData.phone)) {
@@ -482,6 +497,7 @@ export default function Cadastro() {
                 onClick={handleRegister}
                 label={loading ? "Criando..." : "Criar conta"}
                 variant="primary"
+                loading={loading}
                 fullWidth={false}
                 className="sm:min-w-[180px]"
               />

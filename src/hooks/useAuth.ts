@@ -62,6 +62,11 @@ export const useAuth = () => {
     const response = await api.get<TelefoneDisponivelResponse>(
       `/auth/telefone-disponivel/${telefone}`,
     );
+
+    if (typeof response.data?.disponivel !== "boolean") {
+      throw new Error("Resposta inválida ao validar telefone.");
+    }
+
     return response.data.disponivel;
   }, []);
 

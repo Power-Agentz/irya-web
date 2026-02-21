@@ -38,7 +38,8 @@ const Questionario: React.FC = () => {
   const navigate = useNavigate();
 
   const [pilaresData, setPilaresData] = useState<Pilar[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isFetching, setIsFetching] = useState<boolean>(true);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [answers, setAnswers] = useState<AnswersState>({});
   const [pesoAtualInput, setPesoAtualInput] = useState<string>("");
@@ -82,7 +83,7 @@ const Questionario: React.FC = () => {
         setError("Falha ao carregar o questionário. Tente fazer login novamente.");
         console.error("Erro ao buscar estrutura:", err);
       } finally {
-        setLoading(false);
+        setIsFetching(false);
       }
     };
 
@@ -124,17 +125,17 @@ const Questionario: React.FC = () => {
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      setLoading(true);
+      setIsSubmitting(true);
 
       if (parsedPesoAtual === null) {
         setError("Informe seu peso atual em kg para finalizar.");
-        setLoading(false);
+        setIsSubmitting(false);
         return;
       }
 
       if (Object.keys(answers).length !== totalQuestions) {
         setError("Erro interno: Nem todas as perguntas foram respondidas.");
-        setLoading(false);
+        setIsSubmitting(false);
         return;
       }
 
@@ -160,7 +161,7 @@ const Questionario: React.FC = () => {
         setError(
           "Erro na montagem do payload. Verifique se todas as perguntas foram carregadas corretamente.",
         );
-        setLoading(false);
+        setIsSubmitting(false);
         return;
       }
 
@@ -180,13 +181,13 @@ const Questionario: React.FC = () => {
           ),
         );
       } finally {
-        setLoading(false);
+        setIsSubmitting(false);
       }
     },
     [answers, navigate, parsedPesoAtual, questionMap, totalQuestions],
   );
 
-  if (loading) {
+  if (isFetching) {
     return <Loading />;
   }
 
@@ -324,7 +325,12 @@ const Questionario: React.FC = () => {
 
           <div className="mt-5 grid grid-cols-1 gap-2.5 sm:mt-6 sm:grid-cols-2">
             {currentStepIndex > 0 ? (
-              <Button onClick={handlePrevious} variant="secondary" label="Voltar" />
+              <Button
+                onClick={handlePrevious}
+                variant="secondary"
+                label="Voltar"
+                disabled={isSubmitting}
+              />
             ) : (
               <span className="hidden sm:block" />
             )}
@@ -333,8 +339,9 @@ const Questionario: React.FC = () => {
               <Button
                 type="submit"
                 variant="primary"
-                label="Finalizar Questionário"
-                disabled={!isCurrentAnswered}
+                label={isSubmitting ? "Enviando..." : "Finalizar Questionário"}
+                loading={isSubmitting}
+                disabled={!isCurrentAnswered || isSubmitting}
               />
             ) : (
               <Button
@@ -342,7 +349,7 @@ const Questionario: React.FC = () => {
                 variant="primary"
                 label="Próximo"
                 type="button"
-                disabled={!isCurrentAnswered}
+                disabled={!isCurrentAnswered || isSubmitting}
               />
             )}
           </div>

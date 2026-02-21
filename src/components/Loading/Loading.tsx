@@ -1,23 +1,11 @@
 import React from "react";
-
-const dotPositions = [
-  "top-0 left-1/2 -translate-x-1/2",
-  "left-0 top-1/2 -translate-y-1/2",
-  "right-0 top-1/2 -translate-y-1/2",
-  "bottom-0 left-1/2 -translate-x-1/2",
-];
+import LoadingIcon from "../LoadingIcon/LoadingIcon";
 
 const Loading: React.FC = () => {
   return (
-    <div className="flex min-h-[40vh] w-full items-center justify-center py-10">
-      <div className="relative h-12 w-12 animate-[spin_1s_linear_infinite] sm:h-14 sm:w-14">
-        {dotPositions.map((position) => (
-          <span
-            key={position}
-            className={`absolute h-2.5 w-2.5 rounded-full bg-[#87967a] sm:h-3 sm:w-3 ${position}`}
-          />
-        ))}
-      </div>
+    <div className="flex min-h-[40vh] w-full flex-col items-center justify-center gap-3 py-10 text-[#6f8061]">
+      <LoadingIcon size="lg" className="text-[#87967a]" />
+      <p className="text-sm font-medium tracking-wide">Carregando...</p>
     </div>
   );
 };

@@ -83,6 +83,7 @@ const Login = () => {
               variant="primary"
               type="submit"
               label={loading ? "Entrando..." : "Entrar"}
+              loading={loading}
               className="mt-2"
             />
 
