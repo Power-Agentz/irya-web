@@ -328,7 +328,7 @@ const Questionario: React.FC = () => {
               <Button
                 onClick={handlePrevious}
                 variant="secondary"
-                label="Voltar"
+                label="Voltar para pergunta anterior"
                 disabled={isSubmitting}
               />
             ) : (
@@ -347,7 +347,7 @@ const Questionario: React.FC = () => {
               <Button
                 onClick={handleNext}
                 variant="primary"
-                label="Próximo"
+                label="Próxima pergunta"
                 type="button"
                 disabled={!isCurrentAnswered || isSubmitting}
               />

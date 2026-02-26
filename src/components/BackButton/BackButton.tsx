@@ -12,7 +12,7 @@ const BackButton: React.FC = () => {
       onClick={() => navigate(-1)}
     >
       <img src={back} alt="Voltar" className="h-3.5 w-auto sm:h-4" />
-      voltar
+      ir para home
     </button>
   );
 };
