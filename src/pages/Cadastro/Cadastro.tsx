@@ -461,7 +461,7 @@ export default function Cadastro() {
           </p>
         )}
 
-        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <div className="mt-1 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           {stepIndex > 0 && (
             <Button
               onClick={back}
