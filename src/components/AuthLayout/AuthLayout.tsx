@@ -37,7 +37,7 @@ const AuthLayout = ({ children, title }: AuthLayoutProps) => {
 
         <section className="relative flex w-full flex-col bg-[#FDFCF9]/92 backdrop-blur-xl lg:w-2/5 lg:border-l lg:border-[#ece6d9]">
           <div
-            className="relative -mx-6 mb-8 h-[36vh] min-h-[240px] max-h-[280px] overflow-hidden border-b border-[#ece6d9] sm:-mx-10 sm:mb-10 lg:hidden"
+            className="relative -mx-6 h-[36vh] min-h-[240px] max-h-[280px] overflow-hidden border-b border-[#ece6d9] sm:-mx-10 sm:mb-10 lg:hidden"
             style={{
               backgroundImage: moodboardBackground,
               backgroundPosition: "center",
