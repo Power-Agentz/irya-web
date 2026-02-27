@@ -305,9 +305,9 @@ const Questionario: React.FC = () => {
                           className="mt-0.5 h-4 w-4 sm:h-5 sm:w-5"
                         />
                         <span className="leading-relaxed">
-                          {score === 1 && "Nunca"}
-                          {score === 2 && "Às vezes (até dois dias na semana)"}
-                          {score === 3 && "Frequentemente (três ou mais dias na semana)"}
+                          {score === 1 && "Nunca (nenhum dia da semana)"}
+                          {score === 2 && "Às vezes (até quatro dias na semana)"}
+                          {score === 3 && "Frequentemente (cinco ou mais dias na semana)"}
                         </span>
                       </label>
                     );

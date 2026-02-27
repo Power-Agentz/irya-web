@@ -30,7 +30,7 @@ const App: React.FC = () => {
 
         <Header />
 
-        <div className="flex flex-1 items-stretch md:items-center md:py-8">
+        <div className="flex flex-1 items-stretch py-0 md:py-4">
           <Routes>
             <Route
               path="/"

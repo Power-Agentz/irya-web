@@ -1,10 +1,10 @@
 import { useState, useCallback } from "react";
+import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 
-import Container from "../../components/Container/Container";
 import Button from "../../components/Button/Button";
-import BrandLogo from "../../components/BrandLogo/BrandLogo";
 import TextField from "../../components/TextField/TextField";
+import AuthLayout from "../../components/AuthLayout/AuthLayout";
 import { formatPhone, normalizePhone } from "../../utils/phone";
 import { useAuth } from "../../hooks/useAuth";
 import { getApiErrorMessage } from "../../utils/errors";
@@ -43,63 +43,59 @@ const Login = () => {
   );
 
   return (
-    <Container hasHeader={false}>
-      <div className="mx-auto flex w-full max-w-[520px] flex-1 flex-col justify-center py-2 sm:py-4">
-        <BrandLogo className="mb-4 sm:mb-6" />
+    <AuthLayout title="Entrar com telefone e senha">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: "easeOut" }}
+        className="mt-8 sm:mt-9"
+      >
+        {error && (
+          <p className="mb-5 rounded-2xl border border-[#f2c7c7] bg-[#fff1f1]/90 p-3 text-center text-sm font-medium text-[#b00020] backdrop-blur-sm">
+            {error}
+          </p>
+        )}
 
-        <div className="rounded-xl bg-white/72 p-6 backdrop-blur-md border border-white/70 shadow-[0_14px_34px_rgba(24,28,20,0.12)] sm:p-6">
-          <h1 className="text-center text-sm font-semibold text-[#748768] sm:text-2xl">
-            Entrar com telefone e senha
-          </h1>
+        <form onSubmit={handleLogin} className="flex w-full flex-col gap-6 sm:gap-7">
+          <TextField
+            type="tel"
+            inputMode="numeric"
+            label="Telefone"
+            placeholder="(XX) XXXXX-XXXX"
+            value={phone}
+            onChange={(e) => setPhone(formatPhone(e.target.value))}
+            required
+          />
 
-          {error && (
-            <p className="mt-4 rounded-lg border border-[#f5c2c2] bg-[#ffebee] p-3 text-center text-sm font-medium text-[#e53935]">
-              {error}
-            </p>
-          )}
+          <TextField
+            type="password"
+            label="Senha"
+            placeholder="Digite sua senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
-          <form
-            onSubmit={handleLogin}
-            className="mt-6 flex w-full flex-col gap-5 sm:gap-6"
-          >
-            <TextField
-              type="tel"
-              inputMode="numeric"
-              placeholder="Ex.:(xx) xxxxx-xxxx"
-              value={phone}
-              onChange={(e) => setPhone(formatPhone(e.target.value))}
-              required
-            />
+          <Button
+            variant="primary"
+            type="submit"
+            label={loading ? "Entrando..." : "Entrar"}
+            loading={loading}
+            className="mt-2"
+          />
 
-            <TextField
-              type="password"
-              placeholder="Digite sua senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-
-            <Button
-              variant="primary"
-              type="submit"
-              label={loading ? "Entrando..." : "Entrar"}
-              loading={loading}
-              className="mt-2"
-            />
-
-            <p className="text-center text-sm text-[#66705d]">
-              ou
-              <Link
-                to="/cadastro"
-                className="ml-1 font-semibold text-[#87967a] transition hover:text-[#efbd32] hover:underline"
-              >
-                crie sua conta
-              </Link>
-            </p>
-          </form>
-        </div>
-      </div>
-    </Container>
+          <p className="pt-1 text-center text-sm text-[#66705d]">
+            ou
+            <Link
+              to="/cadastro"
+              className="ml-1 font-semibold text-[#7d8e70] transition hover:text-[#6b7d5f] hover:underline"
+            >
+              crie sua conta
+            </Link>
+          </p>
+        </form>
+      </motion.div>
+    </AuthLayout>
   );
 };
 

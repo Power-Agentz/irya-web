@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
-import Container from "../../components/Container/Container";
 import Button from "../../components/Button/Button";
-import BrandLogo from "../../components/BrandLogo/BrandLogo";
+import AuthLayout from "../../components/AuthLayout/AuthLayout";
 import { useNavigate, Link } from "react-router-dom";
 import { formatPhone, normalizePhone } from "../../utils/phone";
 import { useAuth } from "../../hooks/useAuth";
@@ -85,7 +84,9 @@ export default function Cadastro() {
         setPhoneStatus("checking");
         const disponivel = await checkTelefoneDisponivel(phoneDigits);
         setLastCheckedPhone(phoneDigits);
-        const result: PhoneAvailabilityResult = disponivel ? "available" : "taken";
+        const result: PhoneAvailabilityResult = disponivel
+          ? "available"
+          : "taken";
         setPhoneStatus(result);
         return result;
       } catch {
@@ -162,13 +163,14 @@ export default function Cadastro() {
       const isCurrentPhoneAlreadyChecked =
         normalizedPhone === lastCheckedPhone && phoneStatus !== "checking";
 
-      const availabilityResult: PhoneAvailabilityResult = isCurrentPhoneAlreadyChecked
-        ? phoneStatus === "available"
-          ? "available"
-          : phoneStatus === "taken"
-            ? "taken"
-            : "error"
-        : await validatePhoneAvailability(normalizedPhone);
+      const availabilityResult: PhoneAvailabilityResult =
+        isCurrentPhoneAlreadyChecked
+          ? phoneStatus === "available"
+            ? "available"
+            : phoneStatus === "taken"
+              ? "taken"
+              : "error"
+          : await validatePhoneAvailability(normalizedPhone);
 
       if (availabilityResult !== "available") {
         setStepError(
@@ -309,13 +311,10 @@ export default function Cadastro() {
         return (
           <div className="flex min-h-[180px] flex-col justify-center">
             <div className="space-y-3 text-[15px] font-light sm:text-base">
-              <h1 className="text-xl font-medium text-[#3f4c36] sm:text-3xl flex items-center gap-0.5">
-                Bem-vindo ao Portal Irya <span className="text-xs">©</span>
+              <h1 className="flex items-center gap-0.5 font-['Iowan_Old_Style','Georgia',serif] text-[1.5rem] font-medium tracking-tight text-[#3f4c36] sm:text-[2rem]">
+                Bem-vinda ao Portal Irya <span className="text-xs">©</span>
               </h1>
               <p>
-                Esse é o seu hub de experiências conectadas da{" "}
-                <b className="font-bold">Irya</b>.
-                <br />
                 Antes de começarmos, vou precisar de algumas informações
                 básicas.
               </p>
@@ -343,10 +342,6 @@ export default function Cadastro() {
               <p>
                 Nasci para acompanhar mulheres em uma fase de mudanças, no
                 corpo, na mente e na rotina.
-              </p>
-              <p>
-                Se você busca clareza, constância e apoio, você está no lugar
-                certo.
               </p>
             </div>
           </div>
@@ -425,90 +420,90 @@ export default function Cadastro() {
   };
 
   return (
-    <Container hasHeader={false}>
-      <div className="mx-auto flex w-full max-w-[620px] flex-1 flex-col justify-center py-2 sm:py-4">
-        <BrandLogo className="mb-4 sm:mb-6" />
-
-        <div className="rounded-xl bg-white/72 p-4 border border-white/70 shadow-[0_14px_34px_rgba(24,28,20,0.12)] backdrop-blur-md sm:p-6">
-          <div className="mb-6 h-2 w-full overflow-hidden rounded-full bg-[#d7dccf]">
-            <div
-              className="h-full rounded-full bg-[#87967a] transition-[width] duration-300"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentStep}
-              initial={{ x: 40, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -40, opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="min-h-[200px]"
-            >
-              {renderStep()}
-            </motion.div>
-          </AnimatePresence>
-
-          <div className="mt-3 min-h-5">{renderStepFeedback()}</div>
-
-          {stepError && (
-            <p className="mt-3 rounded-lg border border-[#f5c2c2] bg-[#ffebee] p-3 text-sm text-[#b00020]">
-              {stepError}
-            </p>
-          )}
-
-          {error && (
-            <p className="mt-3 rounded-lg border border-[#f5c2c2] bg-[#ffebee] p-3 text-sm text-[#b00020]">
-              {error}
-            </p>
-          )}
-
-          <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-            {stepIndex > 0 && (
-              <Button
-                onClick={back}
-                label="Voltar"
-                variant="secondary"
-                fullWidth={false}
-                className="sm:min-w-[120px]"
-              />
-            )}
-
-            {stepIndex < steps.length - 1 && (
-              <Button
-                onClick={() => void handleNext()}
-                disabled={!canProceed()}
-                variant="primary"
-                label={
-                  currentStep === "welcome"
-                    ? "Iniciar"
-                    : currentStep === "manifesto"
-                      ? "Quero continuar"
-                      : "Próximo"
-                }
-                fullWidth={false}
-                className="sm:min-w-[180px]"
-              />
-            )}
-
-            {stepIndex === steps.length - 1 && (
-              <Button
-                onClick={handleRegister}
-                label={loading ? "Criando..." : "Criar conta"}
-                variant="primary"
-                loading={loading}
-                fullWidth={false}
-                className="sm:min-w-[180px]"
-              />
-            )}
-          </div>
+    <AuthLayout>
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: "easeOut" }}
+        className="mt-2 sm:mt-4"
+      >
+        <div className="mb-7 h-1.5 w-full overflow-hidden rounded-full bg-[#d9ddcf]/75">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-[#9eae8e] via-[#7f9272] to-[#9fae8f] shadow-[0_0_14px_rgba(129,148,113,0.35)] transition-[width] duration-300"
+            style={{ width: `${progress}%` }}
+          />
         </div>
-      </div>
 
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStep}
+            initial={{ x: 40, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -40, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="min-h-[100px]"
+          >
+            {renderStep()}
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="mt-4 min-h-5">{renderStepFeedback()}</div>
+
+        {stepError && (
+          <p className="mt-4 rounded-2xl border border-[#f2c7c7] bg-[#fff1f1]/90 p-3 text-sm text-[#b00020] backdrop-blur-sm">
+            {stepError}
+          </p>
+        )}
+
+        {error && (
+          <p className="mt-4 rounded-2xl border border-[#f2c7c7] bg-[#fff1f1]/90 p-3 text-sm text-[#b00020] backdrop-blur-sm">
+            {error}
+          </p>
+        )}
+
+        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          {stepIndex > 0 && (
+            <Button
+              onClick={back}
+              label="Voltar"
+              variant="secondary"
+              fullWidth={false}
+              className="sm:min-w-[120px]"
+            />
+          )}
+
+          {stepIndex < steps.length - 1 && (
+            <Button
+              onClick={() => void handleNext()}
+              disabled={!canProceed()}
+              variant="primary"
+              label={
+                currentStep === "welcome"
+                  ? "Iniciar"
+                  : currentStep === "manifesto"
+                    ? "Quero continuar"
+                    : "Próximo"
+              }
+              fullWidth={false}
+              className="sm:min-w-[180px]"
+            />
+          )}
+
+          {stepIndex === steps.length - 1 && (
+            <Button
+              onClick={handleRegister}
+              label={loading ? "Criando..." : "Criar conta"}
+              variant="primary"
+              loading={loading}
+              fullWidth={false}
+              className="sm:min-w-[180px]"
+            />
+          )}
+        </div>
+      </motion.div>
       {showPhoneConfirm && (
-        <div className="fixed inset-0 z-[999] flex items-end justify-center bg-black/45 p-3 sm:items-center sm:p-6">
-          <div className="w-full max-w-[360px] rounded-2xl bg-white p-5 text-center shadow-xl sm:p-6">
+        <div className="fixed inset-0 z-[999] flex items-end justify-center bg-[#1d2119]/35 p-3 backdrop-blur-sm sm:items-center sm:p-6">
+          <div className="w-full max-w-[380px] rounded-[26px] border border-[#e6dfd0] bg-[#fffdfa]/95 p-5 text-center shadow-[0_20px_40px_rgba(21,24,19,0.16)] sm:p-6">
             <p className="text-sm sm:text-base">
               Você digitou o número: <b>{formData.phone}</b>.
               <br />
@@ -535,6 +530,6 @@ export default function Cadastro() {
           </div>
         </div>
       )}
-    </Container>
+    </AuthLayout>
   );
 }

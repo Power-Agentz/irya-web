@@ -25,9 +25,9 @@ interface QuestionarioStatus {
   variacaoPesoKg: number | null;
 }
 
-export const useQuestionarioStatus = () => {
+export const useQuestionarioStatus = (enabled = true) => {
   const [status, setStatus] = useState<QuestionarioStatus | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState<string>("");
 
   const fetchStatus = useCallback(async () => {
@@ -46,8 +46,15 @@ export const useQuestionarioStatus = () => {
   }, []);
 
   useEffect(() => {
+    if (!enabled) {
+      setLoading(false);
+      setStatus(null);
+      setError("");
+      return;
+    }
+
     fetchStatus();
-  }, [fetchStatus]);
+  }, [enabled, fetchStatus]);
 
   return { status, loading, error, refetch: fetchStatus };
 };

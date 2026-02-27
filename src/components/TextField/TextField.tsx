@@ -19,7 +19,7 @@ type SelectProps = SharedProps &
 type TextFieldProps = InputProps | SelectProps;
 
 const baseFieldClasses =
-  "mt-2 h-11 w-full p-2 rounded-none border-0 border-b border-[#87967a] bg-transparent text-base font-light outline-none transition focus:border-[#6e7f61] focus:ring-0";
+  "mt-2 h-12 w-full rounded-2xl border border-[#d8d2c7] bg-[#fffdfa]/85 px-4 text-base font-light text-[#425039] outline-none transition duration-200 focus:border-[#90a081] focus:bg-white focus:shadow-[0_8px_30px_rgb(0,0,0,0.04)] focus:ring-0";
 
 const TextField = (props: TextFieldProps) => {
   const { label, className = "" } = props;
@@ -30,7 +30,11 @@ const TextField = (props: TextFieldProps) => {
 
     return (
       <div className={`flex flex-col ${className}`.trim()}>
-        {label && <label className="text-sm font-medium text-[#3f4c36] sm:text-base">{label}</label>}
+        {label && (
+          <label className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#78866a] sm:text-xs">
+            {label}
+          </label>
+        )}
         <select {...selectProps} className={baseFieldClasses}>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
@@ -47,7 +51,11 @@ const TextField = (props: TextFieldProps) => {
 
   return (
     <div className={`flex flex-col ${className}`.trim()}>
-      {label && <label className="text-sm font-medium text-[#3f4c36] sm:text-base">{label}</label>}
+      {label && (
+        <label className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#78866a] sm:text-xs">
+          {label}
+        </label>
+      )}
       <input {...inputProps} className={baseFieldClasses} />
     </div>
   );
