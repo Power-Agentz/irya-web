@@ -118,7 +118,7 @@ const Admin = () => {
 
   if (!isUnlocked) {
     return (
-      <main className="relative min-h-dvh overflow-hidden bg-[#eef3ea] text-[#334234]">
+      <main className="relative min-h-dvh overflow-hidden bg-[#eef3ea] text-[#334234] mx-auto">
         <div className="absolute -left-24 top-16 h-72 w-72 rounded-full bg-[#b8c8a8]/30 blur-3xl" />
         <div className="absolute -right-20 bottom-10 h-72 w-72 rounded-full bg-[#d8c7a2]/30 blur-3xl" />
 
@@ -140,7 +140,7 @@ const Admin = () => {
               <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#eff4e8] text-[#5a6d4f]">
                 <FiKey className="h-5 w-5" />
               </div>
-              <h2 className="mt-4 text-2xl font-semibold text-[#384835]">Admin Login</h2>
+              <h2 className="mt-4 text-2xl font-semibold text-[#384835]">Painel Administrativo</h2>
               <p className="mt-1 text-sm text-[#66705f]">
                 Insira a chave de acesso do time Irya.
               </p>
@@ -148,7 +148,7 @@ const Admin = () => {
               <div className="mt-6 space-y-3">
                 <input
                   type="password"
-                  placeholder="Admin access key"
+                  placeholder="Insira a chave de acesso"
                   value={adminKeyInput}
                   onChange={(e) => setAdminKeyInput(e.target.value)}
                   className="h-12 w-full rounded-xl border border-[#d5ddca] bg-[#fafcf7] px-4 text-sm text-[#2f3c2c] outline-none transition focus:border-[#8da183] focus:ring-2 focus:ring-[#a5b798]/30"
