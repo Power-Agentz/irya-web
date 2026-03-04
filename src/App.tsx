@@ -35,7 +35,7 @@ const AppShell: React.FC = () => {
 
       {!isAdminRoute && <Header />}
 
-      <div className="flex flex-1 items-stretch py-0 md:py-4">
+      <div className="flex flex-1 items-stretch py-0 md:py-2">
         <Routes>
           <Route
             path="/"
