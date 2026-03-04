@@ -178,7 +178,7 @@ const Admin = () => {
   return (
     <main className="min-h-dvh bg-[#f4f7f2] text-[#2f3b2f]">
       <header className="border-b border-[#dbe2d2] bg-white">
-        <div className="mx-auto flex w-full max-w-[1360px] items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex w-[90%] items-center justify-between gap-4 py-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6d7a62]">
               Irya Internal Dashboard
@@ -207,7 +207,7 @@ const Admin = () => {
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-[1360px] px-4 py-5 sm:px-6 lg:px-8">
+      <div className="mx-auto w-[90%] py-5">
         {error && (
           <div className="mb-4 rounded-lg border border-[#fecaca] bg-[#fff1f2] p-3 text-sm font-medium text-[#b91c1c]">
             {error}
