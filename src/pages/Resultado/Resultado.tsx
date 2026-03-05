@@ -13,6 +13,7 @@ import Loading from "../../components/Loading/Loading";
 import Button from "../../components/Button/Button";
 import BackButton from "../../components/BackButton/BackButton";
 import { useQuestionarioStatus } from "../../hooks/useQuestionarioStatus";
+import { isPacienteSubscriber } from "../../utils/session";
 
 const PILAR_COLORS = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"];
 
@@ -127,6 +128,7 @@ const getPilarNarrativa = (percentual: number): PilarNarrativa => {
 const Resultado: React.FC = () => {
   const navigate = useNavigate();
   const { status, loading, error } = useQuestionarioStatus();
+  const isSubscriber = isPacienteSubscriber();
 
   const resultadoData = status?.resultadoAnterior;
 
@@ -283,6 +285,55 @@ const Resultado: React.FC = () => {
             );
           })}
         </div>
+
+        {!isSubscriber && (
+          <section className="mt-8 rounded-2xl border border-[#d6e0c7] bg-gradient-to-br from-[#f8fced] via-[#f2f8e7] to-[#edf4e0] p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] sm:p-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#6d7a5d]">
+              Próximo nível do seu cuidado
+            </p>
+            <h3 className="mt-2 text-xl font-semibold text-[#34412d] sm:text-2xl">
+              Seu plano de evolução personalizado já está pronto para os próximos 30 dias
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-[#4f5a45] sm:text-base">
+              Ative sua assinatura para desbloquear recomendações práticas por pilar, metas semanais e
+              um roteiro com foco no seu momento atual.
+            </p>
+
+            <div className="relative mt-5 overflow-hidden rounded-xl border border-[#dce5cf] bg-white/80 p-4">
+              <div className="pointer-events-none absolute inset-0 z-20 bg-white/25 backdrop-blur-[4px]" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-16 bg-gradient-to-t from-[#edf4e0] to-transparent" />
+
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#6f7d63]">
+                Prévia do plano exclusivo
+              </p>
+              <div className="mt-3 grid gap-2 text-sm text-[#4f5a45] sm:grid-cols-2">
+                <div className="rounded-lg border border-[#e5ebdb] bg-[#f8fbf3] p-3">
+                  Pilar prioritário da semana: Energia e Sono
+                </div>
+                <div className="rounded-lg border border-[#e5ebdb] bg-[#f8fbf3] p-3">
+                  Meta semanal: rotina noturna em 3 passos
+                </div>
+                <div className="rounded-lg border border-[#e5ebdb] bg-[#f8fbf3] p-3">
+                  Plano alimentar guiado por sintomas
+                </div>
+                <div className="rounded-lg border border-[#e5ebdb] bg-[#f8fbf3] p-3">
+                  Ajustes de estilo de vida com acompanhamento
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm font-medium text-[#4d5a44]">Assinatura mensal: R$ 49,00</p>
+              <Button
+                onClick={() => navigate("/assinatura")}
+                variant="primary"
+                label="Desbloquear meu plano personalizado"
+                fullWidth={false}
+                className="sm:min-w-[280px]"
+              />
+            </div>
+          </section>
+        )}
       </div>
     </Container>
   );

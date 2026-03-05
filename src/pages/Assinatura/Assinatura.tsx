@@ -143,7 +143,7 @@ const Assinatura = () => {
                   <FiCreditCard className="h-4 w-4" />
                   Plano mensal
                 </p>
-                <p className="mt-2 text-xl font-semibold text-[#384835]">R$ 79,90 / mês</p>
+                <p className="mt-2 text-xl font-semibold text-[#384835]">R$ 49,00 / mês</p>
                 <p className="mt-1 text-sm text-[#55634a]">
                   Cobrança recorrente mensal via Asaas.
                 </p>

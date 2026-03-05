@@ -9,7 +9,7 @@ const Container = ({ children, hasHeader = true }: ContainerProps) => {
   return (
     <main className="mx-auto w-full max-w-[1320px] bg-[#FDFCF9] px-0 md:px-6">
       <div
-        className={`relative flex w-full flex-col overflow-visible bg-gradient-to-b from-[#fdfcf9] via-[#fbfaf6] to-[#f7f3ea] ${
+        className={`relative flex w-full flex-col overflow-visible from-[#fdfcf9] via-[#fbfaf6] to-[#f7f3ea] ${
           hasHeader ? "min-h-[calc(100dvh-88px)]" : "min-h-dvh"
         } px-5 py-6 sm:px-8 md:min-h-0 md:px-10 md:py-12 lg:px-12`}
       >

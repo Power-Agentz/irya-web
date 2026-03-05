@@ -203,10 +203,17 @@ const Home = () => {
               Assinatura mensal
             </p>
             <h2 className="mt-2 text-lg font-semibold text-[#34412d] sm:text-xl">
-              Ative seu plano para acompanhamento contínuo
+              Assine o Premium. Transforme sua rotina.
             </h2>
             <p className="mt-2 text-sm text-[#4f5548] sm:text-base">
-              Cobrança mensal via Asaas. Seu acesso fica marcado como assinante após a ativação.
+              Acesse seu plano personalizado agora e dê o próximo passo na sua jornada. Tudo o que você
+              precisa em um só lugar.
+            </p>
+            <p className="mt-2 text-sm font-semibold text-[#3f4c36] sm:text-base">
+              R$ 49,00/mês.
+            </p>
+            <p className="mt-1 text-sm text-[#4f5548] sm:text-base">
+              Cancele online a qualquer momento.
             </p>
             <div className="mt-4 sm:max-w-[260px]">
               <Button
