@@ -38,6 +38,7 @@ const Assinatura = () => {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<SubscriptionStatusResponse | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  const [cpfCnpj, setCpfCnpj] = useState("");
 
   const loadStatus = useCallback(async () => {
     setLoading(true);
@@ -58,11 +59,19 @@ const Assinatura = () => {
   }, [loadStatus]);
 
   const handleCheckout = useCallback(async () => {
+    const digits = cpfCnpj.replace(/\D/g, "");
+    if (digits.length !== 11 && digits.length !== 14) {
+      setError("Informe um CPF ou CNPJ válido para continuar.");
+      return;
+    }
+
     setCheckoutLoading(true);
     setError(null);
 
     try {
-      const response = await api.post<CheckoutResponse>("/subscription/checkout");
+      const response = await api.post<CheckoutResponse>("/subscription/checkout", {
+        cpfCnpj: digits,
+      });
       setCheckoutUrl(response.data.checkoutUrl);
       setStatus((current) =>
         current
@@ -94,7 +103,7 @@ const Assinatura = () => {
     } finally {
       setCheckoutLoading(false);
     }
-  }, []);
+  }, [cpfCnpj]);
 
   return (
     <Container>
@@ -138,6 +147,19 @@ const Assinatura = () => {
                 <p className="mt-1 text-sm text-[#55634a]">
                   Cobrança recorrente mensal via Asaas.
                 </p>
+
+                <div className="mt-3">
+                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#647558]">
+                    CPF ou CNPJ
+                  </label>
+                  <input
+                    type="text"
+                    value={cpfCnpj}
+                    onChange={(e) => setCpfCnpj(e.target.value)}
+                    placeholder="Digite seu CPF/CNPJ"
+                    className="h-11 w-full rounded-xl border border-[#d5decb] bg-white/90 px-3 text-sm text-[#334234] outline-none transition focus:border-[#96a88b] focus:ring-2 focus:ring-[#a5b798]/30"
+                  />
+                </div>
 
                 <div className="mt-4">
                   <Button
