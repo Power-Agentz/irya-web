@@ -5,6 +5,9 @@ export interface PacienteSession {
   telefone: string;
   nomeCompleto?: string;
   nome?: string;
+  isSubscriber?: boolean;
+  subscriptionStartedAt?: string | null;
+  subscriptionCanceledAt?: string | null;
 }
 
 export const getToken = (): string | null => localStorage.getItem(TOKEN_KEY);
@@ -57,4 +60,9 @@ export const getPacientePrimeiroNome = (): string => {
   }
 
   return nome.split(/\s+/)[0];
+};
+
+export const isPacienteSubscriber = (): boolean => {
+  const paciente = getPaciente();
+  return paciente?.isSubscriber === true;
 };

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../assets/logo-irya.png";
 import { useAuth } from "../../hooks/useAuth";
 import { useQuestionarioStatus } from "../../hooks/useQuestionarioStatus";
-import { FiBarChart2, FiClipboard, FiLogOut, FiMenu, FiX } from "react-icons/fi";
+import { FiBarChart2, FiClipboard, FiCreditCard, FiLogOut, FiMenu, FiX } from "react-icons/fi";
 import { GiFlowerPot } from "react-icons/gi";
 
 const Header: React.FC = () => {
@@ -103,6 +103,16 @@ const Header: React.FC = () => {
                   Resultado
                 </button>
               )}
+
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => handleNavigate("/assinatura")}
+                className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-[#4f5f43] transition hover:bg-[#f3f6ed]"
+              >
+                <FiCreditCard className="h-4 w-4" />
+                Assinatura
+              </button>
 
               <button
                 type="button"

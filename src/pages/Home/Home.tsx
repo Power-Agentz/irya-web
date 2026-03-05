@@ -3,7 +3,7 @@ import Button from "../../components/Button/Button";
 import { useNavigate } from "react-router-dom";
 import { useQuestionarioStatus } from "../../hooks/useQuestionarioStatus";
 import Loading from "../../components/Loading/Loading";
-import { getPacientePrimeiroNome } from "../../utils/session";
+import { getPacientePrimeiroNome, isPacienteSubscriber } from "../../utils/session";
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
@@ -43,6 +43,7 @@ const getVariacaoPesoTexto = (variacao: number | null): string => {
 const Home = () => {
   const navigate = useNavigate();
   const nome = getPacientePrimeiroNome();
+  const isSubscriber = isPacienteSubscriber();
 
   const { status, loading } = useQuestionarioStatus();
 
@@ -80,6 +81,13 @@ const Home = () => {
                 variant="primary"
                 label="Iniciar questionário MEV"
               />
+              {!isSubscriber && (
+                <Button
+                  onClick={() => navigate("/assinatura")}
+                  variant="secondary"
+                  label="Conhecer assinatura mensal"
+                />
+              )}
               <p className="text-center text-xs font-medium text-[#6d7762] sm:text-sm">
                 Leva menos de 5 minutos para concluir.
               </p>
@@ -164,15 +172,48 @@ const Home = () => {
                 label="Iniciar questionário agora"
               />
 
-              {resultadoAnterior && (
-                <button
-                  type="button"
-                  className="h-11 cursor-pointer rounded-lg border border-[#87967a]/40 bg-white/50 px-4 text-sm font-semibold text-[#6b7c5d] transition hover:bg-white/80"
-                  onClick={() => navigate("/resultado")}
-                >
-                  Ver meu último resultado
-                </button>
-              )}
+              <div className="grid grid-cols-1 gap-3">
+                {resultadoAnterior && (
+                  <button
+                    type="button"
+                    className="h-11 cursor-pointer rounded-lg border border-[#87967a]/40 bg-white/50 px-4 text-sm font-semibold text-[#6b7c5d] transition hover:bg-white/80"
+                    onClick={() => navigate("/resultado")}
+                  >
+                    Ver meu último resultado
+                  </button>
+                )}
+
+                {!isSubscriber && (
+                  <button
+                    type="button"
+                    className="h-11 cursor-pointer rounded-lg border border-[#87967a]/40 bg-white/50 px-4 text-sm font-semibold text-[#6b7c5d] transition hover:bg-white/80"
+                    onClick={() => navigate("/assinatura")}
+                  >
+                    Assinar plano mensal
+                  </button>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {!isSubscriber && (
+          <section className="mb-5 rounded-2xl border border-[#d6e0c7] bg-gradient-to-br from-[#f8fced] via-[#f2f8e7] to-[#edf4e0] p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] sm:mb-6 sm:p-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6d7a5d]">
+              Assinatura mensal
+            </p>
+            <h2 className="mt-2 text-lg font-semibold text-[#34412d] sm:text-xl">
+              Ative seu plano para acompanhamento contínuo
+            </h2>
+            <p className="mt-2 text-sm text-[#4f5548] sm:text-base">
+              Cobrança mensal via Asaas. Seu acesso fica marcado como assinante após a ativação.
+            </p>
+            <div className="mt-4 sm:max-w-[260px]">
+              <Button
+                onClick={() => navigate("/assinatura")}
+                variant="primary"
+                label="Ir para pagamento"
+              />
             </div>
           </section>
         )}

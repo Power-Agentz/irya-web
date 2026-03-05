@@ -7,6 +7,7 @@ import Questionario from "./pages/Questionario/Questionario.tsx";
 import Resultado from "./pages/Resultado/Resultado.tsx";
 import Home from "./pages/Home/Home.tsx";
 import Admin from "./pages/Admin/Admin.tsx";
+import Assinatura from "./pages/Assinatura/Assinatura.tsx";
 
 import Header from "./components/Header/Header.tsx";
 import { isAuthenticated } from "./utils/session";
@@ -89,6 +90,15 @@ const AppShell: React.FC = () => {
             element={
               <PrivateRoute>
                 <Resultado />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/assinatura"
+            element={
+              <PrivateRoute>
+                <Assinatura />
               </PrivateRoute>
             }
           />
