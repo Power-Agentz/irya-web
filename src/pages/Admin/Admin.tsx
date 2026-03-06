@@ -1,9 +1,9 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import api from "../../api";
 import {
   FiArrowLeft,
   FiFilter,
-  FiKey,
+  FiLock,
   FiLogOut,
   FiRefreshCw,
   FiSearch,
@@ -14,6 +14,7 @@ import {
   FiUsers,
 } from "react-icons/fi";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import logoIrya from "../../../assets/logo-irya.png";
 
 type AdminOverview = {
   totalPacientes: number;
@@ -102,11 +103,12 @@ const formatDateTime = (value: string | null) => {
 const Admin = () => {
   const [adminKeyInput, setAdminKeyInput] = useState(() => {
     if (typeof window === "undefined") return "";
-    return sessionStorage.getItem(ADMIN_KEY_STORAGE) ?? "";
+    return localStorage.getItem(ADMIN_KEY_STORAGE) ?? "";
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [restoreChecked, setRestoreChecked] = useState(false);
   const [overview, setOverview] = useState<AdminOverview | null>(null);
   const [pacientes, setPacientes] = useState<AdminPaciente[]>([]);
 
@@ -142,14 +144,24 @@ const Admin = () => {
       setOverview(overviewRes.data);
       setPacientes(pacientesRes.data);
       setIsUnlocked(true);
-      sessionStorage.setItem(ADMIN_KEY_STORAGE, adminKeyInput.trim());
+      localStorage.setItem(ADMIN_KEY_STORAGE, adminKeyInput.trim());
     } catch {
       setError("Acesso inválido ou indisponível no momento.");
       setIsUnlocked(false);
+      localStorage.removeItem(ADMIN_KEY_STORAGE);
     } finally {
       setLoading(false);
     }
   }, [adminKeyInput, headers]);
+
+  useEffect(() => {
+    if (restoreChecked) return;
+    setRestoreChecked(true);
+
+    if (adminKeyInput.trim()) {
+      void fetchAdminData();
+    }
+  }, [adminKeyInput, fetchAdminData, restoreChecked]);
 
   const loadPacienteDetalhes = useCallback(
     async (phone: string) => {
@@ -172,7 +184,7 @@ const Admin = () => {
   );
 
   const handleLogout = () => {
-    sessionStorage.removeItem(ADMIN_KEY_STORAGE);
+    localStorage.removeItem(ADMIN_KEY_STORAGE);
     setIsUnlocked(false);
     setOverview(null);
     setPacientes([]);
@@ -300,23 +312,34 @@ const Admin = () => {
 
   if (!isUnlocked) {
     return (
-      <main className="relative min-h-dvh overflow-hidden bg-[#eef3ea] text-[#334234] mx-auto">
-        <section className="mx-auto flex min-h-dvh w-full max-w-[960px] items-center px-5 py-8 sm:px-8">
-          <article className="w-full rounded-3xl border border-white/65 bg-white p-6 shadow-[0_24px_52px_rgba(45,57,39,0.14)] sm:p-8">
-            <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#eff4e8] text-[#5a6d4f]">
-              <FiKey className="h-5 w-5" />
+      <main className="relative min-h-dvh w-full overflow-hidden bg-[radial-gradient(1200px_640px_at_10%_-6%,rgba(136,156,117,0.26),transparent_58%),radial-gradient(980px_560px_at_96%_100%,rgba(180,157,114,0.18),transparent_63%),linear-gradient(180deg,#243629_0%,#1e2f24_52%,#17261d_100%)] text-[#334234]">
+        <section className="mx-auto flex min-h-dvh w-full max-w-[1180px] items-center justify-center px-5 py-8 sm:px-8">
+          <article className="w-full max-w-[560px] rounded-[32px] border border-white/70 bg-white/92 p-7 shadow-[0_30px_70px_rgba(45,57,39,0.16)] backdrop-blur sm:p-10">
+            <img src={logoIrya} alt="Logo Portal Irya" className="h-14 w-auto" />
+            <div className="mt-6 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#eff4e8] text-[#5a6d4f]">
+              <FiLock className="h-5 w-5" />
             </div>
-            <h1 className="mt-4 text-2xl font-semibold text-[#384835] sm:text-3xl">Admin Login</h1>
-            <p className="mt-2 text-sm text-[#66705f] sm:text-base">
-              Área interna para o time Irya acompanhar cadastros e evolução clínica.
+            <p className="mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#6d7a62]">
+              Acesso interno protegido
+            </p>
+            <h1 className="mt-2 text-3xl font-semibold text-[#374633] sm:text-4xl">
+              Dashboard Irya
+            </h1>
+            <p className="mt-3 text-sm leading-relaxed text-[#5d6c57] sm:text-base">
+              Use a chave da equipe para liberar o ambiente administrativo.
             </p>
 
-            <div className="mt-6 space-y-3">
+            <div className="mt-4 space-y-3">
               <input
                 type="password"
                 placeholder="Insira a chave de acesso"
                 value={adminKeyInput}
                 onChange={(e) => setAdminKeyInput(e.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    void fetchAdminData();
+                  }
+                }}
                 className="h-12 w-full rounded-xl border border-[#d5ddca] bg-[#fafcf7] px-4 text-sm text-[#2f3c2c] outline-none transition focus:border-[#8da183] focus:ring-2 focus:ring-[#a5b798]/30"
               />
               <button
@@ -346,9 +369,9 @@ const Admin = () => {
         <div className="mx-auto flex w-[90%] items-center justify-between gap-4 py-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6d7a62]">
-              Irya Dashboard
+             Painel de visualização interno para o time WHIM
             </p>
-            <h1 className="mt-1 text-2xl font-semibold text-[#394836]">Painel Administrativo</h1>
+            <h1 className="mt-1 text-2xl font-semibold text-[#394836]">Dashboard Irya</h1>
           </div>
           <div className="flex flex-col items-center gap-2 md:flex-row">
             <button

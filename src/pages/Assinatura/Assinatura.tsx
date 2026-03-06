@@ -23,6 +23,15 @@ type CheckoutResponse = {
   };
 };
 
+type CancelResponse = {
+  message: string;
+  subscription: {
+    isSubscriber: boolean;
+    subscriptionStartedAt: string | null;
+    subscriptionCanceledAt: string | null;
+  };
+};
+
 const formatDate = (value: string | null) => {
   if (!value) return "-";
   return new Date(value).toLocaleDateString("pt-BR", {
@@ -36,10 +45,12 @@ const Assinatura = () => {
   const nome = getPacientePrimeiroNome();
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<SubscriptionStatusResponse | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [cpfCnpj, setCpfCnpj] = useState("");
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
   const loadStatus = useCallback(async () => {
     setLoading(true);
@@ -106,9 +117,45 @@ const Assinatura = () => {
     }
   }, [cpfCnpj]);
 
+  const handleCancelSubscription = useCallback(async () => {
+    setCancelLoading(true);
+    setError(null);
+
+    try {
+      const response = await api.post<CancelResponse>("/subscription/cancel");
+
+      setStatus((current) =>
+        current
+          ? {
+              ...current,
+              isSubscriber: response.data.subscription.isSubscriber,
+              subscriptionStartedAt: response.data.subscription.subscriptionStartedAt,
+              subscriptionCanceledAt: response.data.subscription.subscriptionCanceledAt,
+            }
+          : current,
+      );
+
+      const paciente = getPaciente();
+      if (paciente) {
+        setPaciente({
+          ...paciente,
+          isSubscriber: false,
+          subscriptionCanceledAt: response.data.subscription.subscriptionCanceledAt,
+        });
+      }
+
+      setCancelDialogOpen(false);
+    } catch (requestError: unknown) {
+      const maybeAxios = requestError as { response?: { data?: { error?: string } } };
+      setError(maybeAxios.response?.data?.error ?? "Não foi possível cancelar a assinatura.");
+    } finally {
+      setCancelLoading(false);
+    }
+  }, []);
+
   return (
     <Container>
-      <div className="mx-auto w-full max-w-[860px] pb-4">
+      <div className="mx-auto w-full max-w-[1040px] pb-4">
         <BackButton />
         <section className="rounded-3xl border border-[#dbe4cf] bg-white/85 p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] backdrop-blur-md sm:p-7">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d7a5d]">
@@ -148,6 +195,15 @@ const Assinatura = () => {
                 <p className="mt-1 text-sm text-[#55634a]">
                   Cancelamento: {formatDate(status?.subscriptionCanceledAt ?? null)}
                 </p>
+                {status?.isSubscriber && (
+                  <button
+                    type="button"
+                    onClick={() => setCancelDialogOpen(true)}
+                    className="mt-3 inline-flex h-10 cursor-pointer items-center rounded-lg border border-[#efc0c0] bg-[#fff1f1] px-3 text-sm font-semibold text-[#9b3131] transition hover:bg-[#ffe4e4]"
+                  >
+                    Cancelar assinatura
+                  </button>
+                )}
               </article>
 
               <article className="rounded-2xl border border-[#d4dfc6] bg-gradient-to-br from-[#f8fcee] via-[#f2f8e7] to-[#ebf3de] p-4">
@@ -157,7 +213,7 @@ const Assinatura = () => {
                 </p>
                 <p className="mt-2 text-xl font-semibold text-[#384835]">R$ 49,00 / mês</p>
                 <p className="mt-1 text-sm text-[#55634a]">
-                  Pagamento recorrente no cartão via Asaas.
+                  Assinatura mensal recorrente exclusiva no cartão de crédito via Asaas.
                 </p>
 
                 <div className="mt-3">
@@ -184,6 +240,9 @@ const Assinatura = () => {
                 </div>
                 <p className="mt-3 text-xs text-[#65735c]">
                   Ao continuar, você será redirecionada para o checkout seguro do Asaas.
+                </p>
+                <p className="mt-2 text-xs text-[#65735c]">
+                  Cancelamento simples, online e em poucos cliques, sem burocracia.
                 </p>
               </article>
             </div>
@@ -217,6 +276,36 @@ const Assinatura = () => {
           )}
         </section>
       </div>
+
+      {cancelDialogOpen && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-[#1f2a20]/45 p-4 backdrop-blur-[2px]">
+          <div className="w-full max-w-md rounded-2xl border border-[#e5cbc9] bg-white p-5 shadow-[0_20px_50px_rgba(35,39,32,0.28)]">
+            <h3 className="text-lg font-semibold text-[#3c4a39]">Cancelar assinatura</h3>
+            <p className="mt-2 text-sm text-[#5f6b5c]">
+              Você pode cancelar agora em 1 clique. O acesso premium será encerrado e o cancelamento
+              ficará registrado imediatamente.
+            </p>
+            <div className="mt-5 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setCancelDialogOpen(false)}
+                disabled={cancelLoading}
+                className="inline-flex h-10 cursor-pointer items-center rounded-lg border border-[#d6decb] bg-[#f8fbf5] px-3 text-sm font-medium text-[#4f5e49] transition hover:bg-[#eef4e8] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Voltar
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleCancelSubscription()}
+                disabled={cancelLoading}
+                className="inline-flex h-10 cursor-pointer items-center rounded-lg border border-[#efc0c0] bg-[#fff1f1] px-3 text-sm font-semibold text-[#9b3131] transition hover:bg-[#ffe4e4] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {cancelLoading ? "Cancelando..." : "Confirmar cancelamento"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Container>
   );
 };

@@ -120,7 +120,7 @@ const Header: React.FC = () => {
 
   return (
     <div className="sticky top-0 z-50 w-full border-b border-[#dfe6d4] bg-[#f7faf2]/88 backdrop-blur-xl">
-      <header className="mx-auto flex w-full max-w-[1320px] items-center justify-between gap-4 px-5 py-3 sm:px-8 md:px-12">
+      <header className="mx-auto flex w-full max-w-[1120px] items-center justify-between gap-4 px-5 py-3 sm:px-8 md:px-10 lg:px-12">
         <Link to="/inicio" className="shrink-0">
           <img
             className="h-[48px] w-auto sm:h-[52px]"

@@ -62,7 +62,7 @@ const Home = () => {
   if (!resultadoAnterior) {
     return (
       <Container>
-        <div className="mx-auto w-full max-w-[900px] space-y-5 pb-4 sm:space-y-6">
+        <div className="mx-auto w-full max-w-[1120px] space-y-5 pb-4 sm:space-y-6">
           <section className="relative overflow-hidden rounded-[28px] border border-[#d6e0c7] bg-gradient-to-br from-[#f8fced] via-[#f2f8e7] to-[#edf4e0] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:p-8">
             <div className="pointer-events-none absolute -top-10 right-0 h-40 w-40 rounded-full bg-[#d9c69f]/28 blur-3xl" />
             <div className="pointer-events-none absolute bottom-0 left-0 h-48 w-48 rounded-full bg-[#98ab8a]/24 blur-3xl" />
@@ -78,7 +78,7 @@ const Home = () => {
               <div>
                 <header className="space-y-3">
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d7a5d]">
-                    Bem-vindo ao Portal Irya
+                    Bem-vindo ao Portal Irya <span className="ml-0.5 text-xs">©</span>
                   </p>
                   <h1 className="max-w-[20ch] font-['Iowan_Old_Style','Georgia',serif] text-2xl font-medium tracking-tight text-[#34412d] sm:text-4xl">
                     {nome ? `Olá, ${nome}` : "Olá"}, vamos começar seu primeiro ritual?
@@ -164,7 +164,7 @@ const Home = () => {
 
   return (
     <Container>
-      <div className="mx-auto w-full max-w-[760px] pb-4">
+      <div className="mx-auto w-full max-w-[980px] pb-4">
         {podeResponder && (
           <section className="mb-5 rounded-2xl border border-[#c7d5b5] bg-gradient-to-r from-[#f6faef] to-[#eef5e2] p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] sm:mb-6 sm:p-7">
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_180px] lg:items-center">
@@ -222,7 +222,6 @@ const Home = () => {
         {!isSubscriber && (
           <ChatOffer
             className="mb-5 sm:mb-6"
-            label="Premium Irya"
             avatarSrc={iryaGratidao}
             message="Seu MEV já abriu o caminho. No Premium, eu continuo com você no dia a dia com um plano exclusivo, metas claras e ajustes rápidos conforme sua evolução."
             priceLine="R$ 49,00/mês."
@@ -234,7 +233,7 @@ const Home = () => {
 
         <section className="rounded-2xl border border-white/70 bg-white/70 p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] backdrop-blur-md sm:p-7">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6f7d63]">
-            Portal Irya
+            Portal Irya <span className="ml-0.5 text-xs">©</span>
           </p>
           <h1 className="mt-2 text-2xl font-semibold text-[#3c4934] sm:text-3xl">
             {nome ? `Olá, ${nome}` : "Olá"}

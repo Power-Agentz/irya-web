@@ -312,7 +312,7 @@ export default function Cadastro() {
           <div className="flex min-h-[180px] flex-col justify-center">
             <div className="space-y-3 text-[15px] font-light sm:text-base">
               <h1 className="flex items-center gap-0.5 font-['Iowan_Old_Style','Georgia',serif] text-[1.5rem] font-medium tracking-tight text-[#3f4c36] sm:text-[2rem]">
-                Bem-vinda ao Portal Irya <span className="text-xs">©</span>
+                Bem-vinda ao Portal Irya <span className="ml-0.5 text-xs">©</span>
               </h1>
               <p>
                 Antes de começarmos, vou precisar de algumas informações
@@ -407,7 +407,7 @@ export default function Cadastro() {
           <div className="space-y-3">
             <h3 className="text-xl font-semibold text-[#3f4c36]">Prontinho!</h3>
             <p className="text-[15px] font-light sm:text-base">
-              Agora você terá acesso ao Portal Irya, aqui você vai acompanhar o
+              Agora você terá acesso ao Portal Irya<span className="ml-0.5 text-xs">©</span>, aqui você vai acompanhar o
               seu progresso e entender como estamos juntas atingindo os seus
               objetivos.
             </p>

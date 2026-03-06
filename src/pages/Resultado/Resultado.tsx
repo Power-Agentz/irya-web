@@ -6,6 +6,7 @@ import {
   RadialBar,
   ResponsiveContainer,
 } from "recharts";
+import { FiLock } from "react-icons/fi";
 import Container from "../../components/Container/Container";
 import Loading from "../../components/Loading/Loading";
 import Button from "../../components/Button/Button";
@@ -13,7 +14,7 @@ import BackButton from "../../components/BackButton/BackButton";
 import { useQuestionarioStatus } from "../../hooks/useQuestionarioStatus";
 import { isPacienteSubscriber } from "../../utils/session";
 import ChatOffer from "../../components/ChatOffer/ChatOffer";
-import iryaPensando from "../../../assets/irya-pensando.png";
+import iryaSaudando from "../../../assets/irya-saudando.png";
 
 const PILAR_COLORS = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"];
 
@@ -153,7 +154,7 @@ const Resultado: React.FC = () => {
   if (error || !resultadoData) {
     return (
       <Container>
-        <div className="mx-auto w-full max-w-[660px]">
+        <div className="mx-auto w-full max-w-[820px]">
           <BackButton />
           <div className="rounded-xl border border-white/70 bg-white/72 p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] backdrop-blur-md sm:p-6">
             <h1 className="text-xl font-semibold text-[#3f4c36] sm:text-2xl">Sem resultados disponíveis</h1>
@@ -186,11 +187,11 @@ const Resultado: React.FC = () => {
 
   return (
     <Container>
-      <div className="mx-auto w-full max-w-[780px]">
+      <div className="mx-auto w-full max-w-[980px]">
         <BackButton />
 
         <h1 className="text-2xl font-semibold text-[#3f4c36] sm:text-3xl">
-          Seu Ritual de Florescimento WHIM
+          Prontinho! Confira o seu resultado abaixo.
         </h1>
         <p className="mt-1 text-sm text-[#5f6657] sm:text-base">
           Última atualização: {formatDate(dataConclusao)}
@@ -304,6 +305,11 @@ const Resultado: React.FC = () => {
 
             <div className="relative mt-5 overflow-hidden rounded-xl border border-[#dce5cf] bg-white/80 p-4">
               <div className="pointer-events-none absolute inset-0 z-20 bg-white/25 backdrop-blur-[4px]" />
+              <div className="pointer-events-none absolute inset-0 z-40 flex items-center justify-center">
+                <span className="inline-flex h-16 w-16 items-center justify-center rounded-full border border-[#cddbbc] bg-[#f3f8ea]/95 text-[#5f7450] shadow-[0_10px_20px_rgba(36,49,30,0.18)]">
+                  <FiLock className="h-7 w-7" />
+                </span>
+              </div>
               <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-16 bg-gradient-to-t from-[#edf4e0] to-transparent" />
 
               <p className="text-xs font-semibold uppercase tracking-wide text-[#6f7d63]">
@@ -327,8 +333,7 @@ const Resultado: React.FC = () => {
 
             <ChatOffer
               className="mt-5"
-              label="Desbloqueio do Premium"
-              avatarSrc={iryaPensando}
+              avatarSrc={iryaSaudando}
               message="Seu resultado já mostrou o próximo passo. No Premium, eu transformo isso em um plano exclusivo e te acompanho diariamente para manter constância."
               priceLine="R$ 49,00/mês."
               policyLine="Cancele online a qualquer momento."

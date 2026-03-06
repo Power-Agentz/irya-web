@@ -194,7 +194,7 @@ const Questionario: React.FC = () => {
   if (error && !isWeightStep && !currentQuestion) {
     return (
       <Container>
-        <p className="mx-auto w-full max-w-[620px] rounded-lg border border-[#f5c2c2] bg-[#ffebee] p-4 text-sm text-[#b00020]">
+        <p className="mx-auto w-full max-w-[760px] rounded-lg border border-[#f5c2c2] bg-[#ffebee] p-4 text-sm text-[#b00020]">
           {error}
         </p>
       </Container>
@@ -221,7 +221,7 @@ const Questionario: React.FC = () => {
 
   return (
     <Container>
-      <div className="mx-auto w-full max-w-[660px]">
+      <div className="mx-auto w-full max-w-[860px]">
         <BackButton />
 
         <h1 className="text-2xl font-semibold text-[#3f4c36] sm:text-3xl">

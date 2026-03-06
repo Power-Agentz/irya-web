@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import { FiLock } from "react-icons/fi";
 
 import Button from "../../components/Button/Button";
 import TextField from "../../components/TextField/TextField";
@@ -93,6 +94,16 @@ const Login = () => {
               crie sua conta
             </Link>
           </p>
+
+          <div className="pt-1 text-center">
+            <Link
+              to="/admin"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#d6dfcc] bg-[#f7faf2] px-3 py-1 text-xs font-medium text-[#607053] transition hover:border-[#b8c6aa] hover:bg-[#eef4e5] hover:text-[#4f5f43]"
+            >
+              <FiLock className="h-3.5 w-3.5" />
+              Acesso interno da equipe
+            </Link>
+          </div>
         </form>
       </motion.div>
     </AuthLayout>

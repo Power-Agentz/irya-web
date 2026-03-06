@@ -14,7 +14,7 @@ const moodboardBackground =
 const AuthLayout = ({ children, title }: AuthLayoutProps) => {
   return (
     <main className="w-full bg-[#FDFCF9]">
-      <div className="mx-auto flex min-h-dvh w-full max-w-[1320px] overflow-hidden md:min-h-[calc(100dvh-4rem)] md:rounded-[34px] md:border md:border-[#ece6d9] md:shadow-[0_24px_70px_rgba(26,30,23,0.08)]">
+      <div className="mx-auto flex min-h-dvh w-full max-w-[1320px] overflow-hidden md:min-h-[calc(100dvh-4rem)] md:h-full md:border md:border-[#ece6d9] md:shadow-[0_24px_70px_rgba(26,30,23,0.08)]">
         <section
           className="relative hidden w-3/5 overflow-hidden bg-[#eff2e8] lg:block"
           style={{
