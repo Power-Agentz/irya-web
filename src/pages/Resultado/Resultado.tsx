@@ -31,6 +31,26 @@ type PilarNarrativa = {
   mensagem: string;
 };
 
+const formatAltura = (altura: number | null): string => {
+  if (altura === null || Number.isNaN(altura)) return "Não registrada";
+  return `${altura.toFixed(2).replace(".", ",")} m`;
+};
+
+const formatImc = (imc: number | null): string => {
+  if (imc === null || Number.isNaN(imc)) return "Não calculado";
+  return imc.toFixed(1).replace(".", ",");
+};
+
+const getImcClassificacao = (imc: number | null): string => {
+  if (imc === null || Number.isNaN(imc)) return "";
+  if (imc < 18.5) return "Abaixo do ideal";
+  if (imc < 25) return "Faixa saudável";
+  if (imc < 30) return "Acima do ideal";
+  if (imc < 35) return "Obesidade I";
+  if (imc < 40) return "Obesidade II";
+  return "Obesidade III";
+};
+
 const getFaixaNarrativa = (percentual: number): FaixaNarrativa => {
   if (percentual <= 20) {
     return {
@@ -132,6 +152,8 @@ const Resultado: React.FC = () => {
   const isSubscriber = isPacienteSubscriber();
 
   const resultadoData = status?.resultadoAnterior;
+  const alturaM = status?.alturaM ?? resultadoData?.alturaM ?? null;
+  const imcAtual = status?.imcAtual ?? resultadoData?.imcAtual ?? null;
 
   const chartData = useMemo(() => {
     if (!resultadoData) return [];
@@ -224,6 +246,30 @@ const Resultado: React.FC = () => {
           <p className="mt-4 text-xs text-[#707a66] sm:text-sm">
             Classificação técnica atual: <b>{classificacao}</b>
           </p>
+
+          <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <div className="rounded-xl border border-[#dce4cf] bg-[#f7faf2] p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#6d7a5d]">
+                Altura considerada
+              </p>
+              <p className="mt-1 text-sm font-semibold text-[#42503a] sm:text-base">
+                {formatAltura(alturaM)}
+              </p>
+            </div>
+            <div className="rounded-xl border border-[#dce4cf] bg-[#f7faf2] p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#6d7a5d]">
+                IMC atual
+              </p>
+              <p className="mt-1 text-sm font-semibold text-[#42503a] sm:text-base">
+                {formatImc(imcAtual)}
+                {imcAtual !== null && (
+                  <span className="ml-1 font-medium text-[#5b684f]">
+                    ({getImcClassificacao(imcAtual)})
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
         </div>
 
         <h3 className="mt-7 border-b-2 border-b-[#87967a] pb-2 text-lg font-semibold text-[#5f6f52] sm:mt-8 sm:text-xl">

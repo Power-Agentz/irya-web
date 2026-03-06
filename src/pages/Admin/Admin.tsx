@@ -26,6 +26,7 @@ type AdminOverview = {
 type AdminPaciente = {
   telefone: string;
   nomeCompleto: string;
+  alturaM: number | null;
   dataCadastro: string;
   isSubscriber: boolean;
   subscriptionStartedAt: string | null;
@@ -61,12 +62,14 @@ type AdminAnswer = {
 type AdminPeso = {
   id: number;
   pesoKg: number;
+  imc: number | null;
   dataRegistro: string;
 };
 
 type AdminPacienteDetalhes = {
   telefone: string;
   nomeCompleto: string;
+  alturaM: number | null;
   dataCadastro: string;
   isSubscriber: boolean;
   subscriptionStartedAt: string | null;
@@ -98,6 +101,16 @@ const formatDateTime = (value: string | null) => {
     hour: "2-digit",
     minute: "2-digit",
   });
+};
+
+const formatHeight = (value: number | null) => {
+  if (value === null || Number.isNaN(value)) return "-";
+  return `${value.toFixed(2).replace(".", ",")} m`;
+};
+
+const formatImc = (value: number | null) => {
+  if (value === null || Number.isNaN(value)) return "-";
+  return value.toFixed(1).replace(".", ",");
 };
 
 const Admin = () => {
@@ -226,6 +239,8 @@ const Admin = () => {
         }),
       }));
   }, [selectedPacienteDetalhes]);
+
+  const imcAtual = selectedPacienteDetalhes?.historicoPesos?.[0]?.imc ?? null;
 
   const filteredPacientes = useMemo(() => {
     const search = searchTerm.trim().toLowerCase();
@@ -473,6 +488,7 @@ const Admin = () => {
                   <tr>
                     <th className="pb-2">Nome</th>
                     <th className="pb-2">Telefone</th>
+                    <th className="pb-2">Altura</th>
                     <th className="pb-2">Data de Cadastro</th>
                     <th className="pb-2">Assinatura (S/N)</th>
                     <th className="pb-2">Data de Assinatura</th>
@@ -483,7 +499,7 @@ const Admin = () => {
                 <tbody>
                   {filteredPacientes.length === 0 && (
                     <tr>
-                      <td className="py-3 text-[#6f7c66]" colSpan={7}>
+                      <td className="py-3 text-[#6f7c66]" colSpan={8}>
                         Nenhum cadastro encontrado com os filtros atuais.
                       </td>
                     </tr>
@@ -496,6 +512,7 @@ const Admin = () => {
                     >
                       <td className="py-2">{p.nomeCompleto}</td>
                       <td className="py-2">{p.telefone}</td>
+                      <td className="py-2">{formatHeight(p.alturaM)}</td>
                       <td className="py-2">{formatDate(p.dataCadastro)}</td>
                       <td className="py-2">{p.isSubscriber ? "S" : "N"}</td>
                       <td className="py-2">{formatDate(p.subscriptionStartedAt)}</td>
@@ -530,6 +547,10 @@ const Admin = () => {
                   Detalhes: {selectedPacienteDetalhes.nomeCompleto}
                 </h2>
                 <p className="text-sm text-[#62725a]">{selectedPacienteDetalhes.telefone}</p>
+                <p className="mt-1 text-sm text-[#62725a]">
+                  Altura: {formatHeight(selectedPacienteDetalhes.alturaM)} | IMC atual:{" "}
+                  {formatImc(imcAtual)}
+                </p>
               </div>
               <button
                 type="button"
@@ -591,12 +612,13 @@ const Admin = () => {
                         <tr>
                           <th className="pb-2">Data</th>
                           <th className="pb-2">Peso (kg)</th>
+                          <th className="pb-2">IMC</th>
                         </tr>
                       </thead>
                       <tbody>
                         {selectedPacienteDetalhes.historicoPesos.length === 0 && (
                           <tr>
-                            <td className="py-2 text-[#6f7c66]" colSpan={2}>
+                            <td className="py-2 text-[#6f7c66]" colSpan={3}>
                               Sem registros de peso.
                             </td>
                           </tr>
@@ -605,6 +627,7 @@ const Admin = () => {
                           <tr key={peso.id} className="border-t border-[#edf2e7] text-[#2f3d2d]">
                             <td className="py-2">{formatDateTime(peso.dataRegistro)}</td>
                             <td className="py-2">{peso.pesoKg.toFixed(1)}</td>
+                            <td className="py-2">{formatImc(peso.imc)}</td>
                           </tr>
                         ))}
                       </tbody>

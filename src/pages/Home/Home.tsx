@@ -45,6 +45,32 @@ const getVariacaoPesoTexto = (variacao: number | null): string => {
   return variacao > 0 ? `ganhou ${valor} kg` : `perdeu ${valor} kg`;
 };
 
+const formatAltura = (altura: number | null): string => {
+  if (altura === null || Number.isNaN(altura)) {
+    return "Não registrada";
+  }
+
+  return `${altura.toFixed(2).replace(".", ",")} m`;
+};
+
+const formatImc = (imc: number | null): string => {
+  if (imc === null || Number.isNaN(imc)) {
+    return "Não calculado";
+  }
+
+  return imc.toFixed(1).replace(".", ",");
+};
+
+const getImcClassificacao = (imc: number | null): string => {
+  if (imc === null || Number.isNaN(imc)) return "";
+  if (imc < 18.5) return "Abaixo do ideal";
+  if (imc < 25) return "Faixa saudável";
+  if (imc < 30) return "Acima do ideal";
+  if (imc < 35) return "Obesidade I";
+  if (imc < 40) return "Obesidade II";
+  return "Obesidade III";
+};
+
 const Home = () => {
   const navigate = useNavigate();
   const nome = getPacientePrimeiroNome();
@@ -58,6 +84,8 @@ const Home = () => {
   const resultadoAnterior = status?.resultadoAnterior;
   const pesoAtualKg = status?.pesoAtualKg ?? null;
   const variacaoPesoKg = status?.variacaoPesoKg ?? null;
+  const alturaM = status?.alturaM ?? null;
+  const imcAtual = status?.imcAtual ?? null;
   const diasRestantes = getDiasRestantes(resultadoAnterior?.dataLimite);
 
   if (!resultadoAnterior) {
@@ -99,15 +127,8 @@ const Home = () => {
                   <Button
                     onClick={() => navigate("/questionario")}
                     variant="primary"
-                    label="Iniciar questionário MEV"
+                    label="Iniciar questionário de estilo de vida"
                   />
-                  {!isSubscriber && (
-                    <Button
-                      onClick={() => navigate("/assinatura")}
-                      variant="secondary"
-                      label="Conhecer assinatura mensal"
-                    />
-                  )}
                   <p className="text-center text-xs font-medium text-[#6d7762] sm:text-sm">
                     Leva menos de 5 minutos para concluir.
                   </p>
@@ -122,25 +143,25 @@ const Home = () => {
                 Clareza
               </p>
               <p className="mt-2 text-sm leading-relaxed text-[#53604a] sm:text-base">
-                Entenda seu momento atual com uma leitura estruturada.
+                Entenda o que está acontecendo com seu corpo e sua rotina.
               </p>
             </article>
 
             <article className="rounded-2xl border border-[#e3e7db] bg-[#fffdfa]/90 p-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6f7d63]">
-                Direção
+                Direção e acompanhamento
               </p>
               <p className="mt-2 text-sm leading-relaxed text-[#53604a] sm:text-base">
-                Receba orientações práticas alinhadas com sua rotina.
+                Receba orientações práticas e acompanhe sua evolução mês a mês.
               </p>
             </article>
 
             <article className="rounded-2xl border border-[#e3e7db] bg-[#fffdfa]/90 p-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6f7d63]">
-                Acompanhamento
+                Transformação
               </p>
               <p className="mt-2 text-sm leading-relaxed text-[#53604a] sm:text-base">
-                Compare sua evolução a cada novo check-in mensal.
+                Construa novos hábitos e veja sua saúde evoluir de forma consistente.
               </p>
             </article>
           </section>
@@ -152,15 +173,21 @@ const Home = () => {
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="rounded-xl border border-[#e7ebde] bg-[#f7f9f2] p-4">
                 <p className="text-sm font-semibold text-[#3f4c36]">1. Responda</p>
-                <p className="mt-1 text-sm text-[#59664f]">Preencha seu primeiro MEV.</p>
+                <p className="mt-1 text-sm text-[#59664f]">
+                  Preencha seu primeiro questionário de estilo de vida em poucos minutos.
+                </p>
               </div>
               <div className="rounded-xl border border-[#e7ebde] bg-[#f7f9f2] p-4">
-                <p className="text-sm font-semibold text-[#3f4c36]">2. Receba leitura</p>
-                <p className="mt-1 text-sm text-[#59664f]">Veja seu resultado por pilares.</p>
+                <p className="text-sm font-semibold text-[#3f4c36]">2. Receba sua leitura</p>
+                <p className="mt-1 text-sm text-[#59664f]">
+                  Entenda como estão os pilares da sua saúde e rotina.
+                </p>
               </div>
               <div className="rounded-xl border border-[#e7ebde] bg-[#f7f9f2] p-4">
-                <p className="text-sm font-semibold text-[#3f4c36]">3. Evolua</p>
-                <p className="mt-1 text-sm text-[#59664f]">Acompanhe sua consistência mês a mês.</p>
+                <p className="text-sm font-semibold text-[#3f4c36]">3. Evolua com constância</p>
+                <p className="mt-1 text-sm text-[#59664f]">
+                  Acompanhe sua evolução e fortaleça novos hábitos mês a mês.
+                </p>
               </div>
             </div>
           </section>
@@ -230,7 +257,7 @@ const Home = () => {
           <ChatOffer
             className="mb-5 sm:mb-6"
             avatarSrc={iryaGratidao}
-            message="Seu MEV já abriu o caminho. No Premium, eu continuo com você no dia a dia com um plano exclusivo, metas claras e ajustes rápidos conforme sua evolução."
+            message="Seu questionário de estilo de vida já abriu o caminho. No Premium, eu continuo com você no dia a dia com um plano exclusivo, metas claras e ajustes rápidos conforme sua evolução."
             priceLine="R$ 49,00/mês."
             policyLine="Cancele online a qualquer momento."
             ctaLabel="Liberar meu plano exclusivo"
@@ -298,6 +325,23 @@ const Home = () => {
                 ? "Seu primeiro registro será salvo ao concluir o próximo questionário."
                 : getVariacaoPesoTexto(variacaoPesoKg)}
             </p>
+
+            <div className="mt-3 border-t border-[#d5dfc9] pt-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#6e7a60]">
+                Altura registrada
+              </p>
+              <p className="mt-1 text-sm font-medium text-[#46533e]">{formatAltura(alturaM)}</p>
+
+              <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-[#6e7a60]">
+                IMC atual
+              </p>
+              <p className="mt-1 text-sm font-medium text-[#46533e]">
+                {formatImc(imcAtual)}
+                {imcAtual !== null && (
+                  <span className="ml-1 text-[#5d6a50]">({getImcClassificacao(imcAtual)})</span>
+                )}
+              </p>
+            </div>
           </div>
 
           <div className="mt-4 rounded-xl border border-[#e2e7d7] bg-[#f7f9f2] p-4">

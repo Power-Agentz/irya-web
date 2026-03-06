@@ -15,6 +15,8 @@ export interface ResultadoData {
   pontuacaoTotal: number;
   percentualGlobal: number;
   classificacao: string;
+  alturaM?: number | null;
+  imcAtual?: number | null;
   detalhesPilares: DetalhePilar[];
 }
 
@@ -23,6 +25,8 @@ interface QuestionarioStatus {
   resultadoAnterior: ResultadoData | null;
   pesoAtualKg: number | null;
   variacaoPesoKg: number | null;
+  alturaM: number | null;
+  imcAtual: number | null;
 }
 
 export const useQuestionarioStatus = (enabled = true) => {

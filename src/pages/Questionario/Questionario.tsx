@@ -34,6 +34,39 @@ const parsePesoInput = (value: string): number | null => {
   return parsed;
 };
 
+const formatPesoInput = (value: number): string =>
+  value.toFixed(1).replace(".", ",");
+
+const formatAlturaInput = (value: string): string => {
+  const digits = value.replace(/\D/g, "").slice(0, 3);
+  if (!digits) return "";
+
+  const padded = digits.padStart(3, "0");
+  const intPart = String(Number(padded.slice(0, 1)));
+  const decimalPart = padded.slice(1);
+
+  return `${intPart},${decimalPart}`;
+};
+
+const parseAlturaInput = (value: string): number | null => {
+  const sanitized = value
+    .replace(/m/gi, "")
+    .replace(",", ".")
+    .replace(/[^0-9.]/g, "");
+
+  if (!sanitized) return null;
+
+  const parsed = Number(sanitized);
+  if (!Number.isFinite(parsed) || parsed < 0.8 || parsed > 2.5) return null;
+
+  return parsed;
+};
+
+type QuestionarioStatusPayload = {
+  alturaM: number | null;
+  pesoAtualKg: number | null;
+};
+
 const Questionario: React.FC = () => {
   const navigate = useNavigate();
 
@@ -43,6 +76,8 @@ const Questionario: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [answers, setAnswers] = useState<AnswersState>({});
   const [pesoAtualInput, setPesoAtualInput] = useState<string>("");
+  const [alturaInput, setAlturaInput] = useState<string>("");
+  const [alturaBloqueada, setAlturaBloqueada] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
   const allQuestions: Pergunta[] = useMemo(() => {
@@ -73,12 +108,36 @@ const Questionario: React.FC = () => {
   const isLastStep = currentStepIndex === totalSteps - 1;
 
   const parsedPesoAtual = parsePesoInput(pesoAtualInput);
+  const parsedAltura = parseAlturaInput(alturaInput);
 
   useEffect(() => {
     const fetchEstrutura = async () => {
       try {
-        const response = await api.get("/questionario/estrutura");
-        setPilaresData(response.data);
+        const [estruturaResponse, statusResponse] = await Promise.all([
+          api.get("/questionario/estrutura"),
+          api.get<QuestionarioStatusPayload>("/questionario/status"),
+        ]);
+
+        setPilaresData(estruturaResponse.data);
+
+        const alturaM = statusResponse.data?.alturaM;
+        const pesoAtualKg = statusResponse.data?.pesoAtualKg;
+
+        if (typeof alturaM === "number" && Number.isFinite(alturaM) && alturaM > 0) {
+          setAlturaInput(formatAlturaInput(String(Math.round(alturaM * 100))));
+          setAlturaBloqueada(true);
+        } else {
+          setAlturaInput("");
+          setAlturaBloqueada(false);
+        }
+
+        if (
+          typeof pesoAtualKg === "number" &&
+          Number.isFinite(pesoAtualKg) &&
+          pesoAtualKg > 0
+        ) {
+          setPesoAtualInput(formatPesoInput(pesoAtualKg));
+        }
       } catch (err) {
         setError("Falha ao carregar o questionário. Tente fazer login novamente.");
         console.error("Erro ao buscar estrutura:", err);
@@ -104,6 +163,11 @@ const Questionario: React.FC = () => {
         return;
       }
 
+      if (parsedAltura === null) {
+        setError("Informe sua altura no formato 0,00m para continuar.");
+        return;
+      }
+
       setError(null);
       setCurrentStepIndex((prevIndex) => prevIndex + 1);
       return;
@@ -113,7 +177,7 @@ const Questionario: React.FC = () => {
       setError(null);
       setCurrentStepIndex((prevIndex) => prevIndex + 1);
     }
-  }, [answers, currentQuestion, isLastStep, isWeightStep, parsedPesoAtual]);
+  }, [answers, currentQuestion, isLastStep, isWeightStep, parsedAltura, parsedPesoAtual]);
 
   const handleAnswerChange = useCallback((perguntaId: number, score: number) => {
     setAnswers((prevAnswers) => ({
@@ -129,6 +193,12 @@ const Questionario: React.FC = () => {
 
       if (parsedPesoAtual === null) {
         setError("Informe seu peso atual em kg para finalizar.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (parsedAltura === null) {
+        setError("Informe sua altura no formato 0,00m para finalizar.");
         setIsSubmitting(false);
         return;
       }
@@ -170,6 +240,7 @@ const Questionario: React.FC = () => {
       try {
         await api.post("/questionario/submeter", {
           pesoAtualKg: parsedPesoAtual,
+          alturaM: parsedAltura,
           respostas: submissionData,
         });
         navigate("/resultado");
@@ -184,7 +255,7 @@ const Questionario: React.FC = () => {
         setIsSubmitting(false);
       }
     },
-    [answers, navigate, parsedPesoAtual, questionMap, totalQuestions],
+    [answers, navigate, parsedAltura, parsedPesoAtual, questionMap, totalQuestions],
   );
 
   if (isFetching) {
@@ -244,30 +315,67 @@ const Questionario: React.FC = () => {
         <form onSubmit={handleSubmit} className="mt-5 sm:mt-6">
           {isWeightStep ? (
             <section className="rounded-xl border border-[#e8ebdf] bg-white/82 p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)] sm:p-6">
-              <h2 className="text-lg font-semibold text-[#5f6f52] sm:text-xl">Seu peso atual</h2>
+              <h2 className="text-lg font-semibold text-[#5f6f52] sm:text-xl">
+                Seus dados físicos atuais
+              </h2>
 
               <p className="mt-3 text-[15px] leading-relaxed text-[#3f3f3f] sm:text-base">
-                Qual é o seu peso hoje? Esse dado é essencial para acompanharmos sua evolução mensal.
+                Informe seu peso de hoje e sua altura para calcularmos seu IMC e acompanharmos sua evolução mensal.
               </p>
 
-              <div className="mt-5 max-w-[220px]">
-                <label htmlFor="peso-atual" className="text-sm font-medium text-[#4f5a45]">
-                  Peso em kg
-                </label>
-                <div className="mt-2 flex items-center gap-2 rounded-lg border border-[#d9dfcd] bg-[#f9fbf5] px-3">
-                  <input
-                    id="peso-atual"
-                    type="text"
-                    inputMode="decimal"
-                    placeholder="Ex.: 90,4"
-                    value={pesoAtualInput}
-                    onChange={(e) => {
-                      setError(null);
-                      setPesoAtualInput(e.target.value);
-                    }}
-                    className="h-11 w-full bg-transparent text-base outline-none"
-                  />
-                  <span className="text-sm font-semibold text-[#5f6f52]">kg</span>
+              <div className="mt-5 grid grid-cols-1 gap-4 sm:max-w-[520px] sm:grid-cols-2">
+                <div>
+                  <label htmlFor="peso-atual" className="text-sm font-medium text-[#4f5a45]">
+                    Peso em kg
+                  </label>
+                  <div className="mt-2 flex items-center gap-2 rounded-lg border border-[#d9dfcd] bg-[#f9fbf5] px-3">
+                    <input
+                      id="peso-atual"
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="Ex.: 90,4"
+                      value={pesoAtualInput}
+                      onChange={(e) => {
+                        setError(null);
+                        setPesoAtualInput(e.target.value);
+                      }}
+                      className="h-11 w-full bg-transparent text-base outline-none"
+                    />
+                    <span className="text-sm font-semibold text-[#5f6f52]">kg</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="altura-atual" className="text-sm font-medium text-[#4f5a45]">
+                    Altura em m
+                  </label>
+                  <div
+                    className={`mt-2 flex items-center gap-2 rounded-lg border px-3 ${
+                      alturaBloqueada
+                        ? "border-[#d5dbc9] bg-[#eef3e7]"
+                        : "border-[#d9dfcd] bg-[#f9fbf5]"
+                    }`}
+                  >
+                    <input
+                      id="altura-atual"
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="Ex.: 1,65"
+                      value={alturaInput}
+                      disabled={alturaBloqueada}
+                      onChange={(e) => {
+                        setError(null);
+                        setAlturaInput(formatAlturaInput(e.target.value));
+                      }}
+                      className="h-11 w-full bg-transparent text-base outline-none disabled:cursor-not-allowed disabled:text-[#5f6f52]"
+                    />
+                    <span className="text-sm font-semibold text-[#5f6f52]">m</span>
+                  </div>
+                  {alturaBloqueada && (
+                    <p className="mt-1 text-xs text-[#6b7762]">
+                      Altura registrada no primeiro acesso e bloqueada para edição.
+                    </p>
+                  )}
                 </div>
               </div>
             </section>
