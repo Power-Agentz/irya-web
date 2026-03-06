@@ -42,7 +42,7 @@ export const useQuestionarioStatus = (enabled = true) => {
       const response = await api.get<QuestionarioStatus>("/questionario/status");
       setStatus(response.data);
     } catch {
-      setError("Erro ao verificar status do questionário.");
+      setError("Erro ao verificar status da avaliação.");
       setStatus(null);
     } finally {
       setLoading(false);

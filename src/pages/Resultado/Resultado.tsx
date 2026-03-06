@@ -13,7 +13,6 @@ import Button from "../../components/Button/Button";
 import BackButton from "../../components/BackButton/BackButton";
 import { useQuestionarioStatus } from "../../hooks/useQuestionarioStatus";
 import { isPacienteSubscriber } from "../../utils/session";
-import ChatOffer from "../../components/ChatOffer/ChatOffer";
 import iryaSaudando from "../../../assets/irya-saudando.png";
 
 const PILAR_COLORS = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"];
@@ -39,6 +38,16 @@ const formatAltura = (altura: number | null): string => {
 const formatImc = (imc: number | null): string => {
   if (imc === null || Number.isNaN(imc)) return "Não calculado";
   return imc.toFixed(1).replace(".", ",");
+};
+
+const formatPercentual = (valor: number | null): string => {
+  if (valor === null || Number.isNaN(valor)) return "-";
+  return `${valor.toFixed(1).replace(".", ",")}%`;
+};
+
+const formatNotaDez = (valor: number | null): string => {
+  if (valor === null || Number.isNaN(valor)) return "-";
+  return valor.toFixed(1).replace(".", ",");
 };
 
 const getImcClassificacao = (imc: number | null): string => {
@@ -169,6 +178,17 @@ const Resultado: React.FC = () => {
     }));
   }, [resultadoData]);
 
+  const mediaPilaresPercentual = useMemo(() => {
+    if (!chartData.length) return null;
+    const total = chartData.reduce((acumulado, item) => acumulado + item.value, 0);
+    return total / chartData.length;
+  }, [chartData]);
+
+  const mediaPilaresNotaDez = useMemo(() => {
+    if (mediaPilaresPercentual === null) return null;
+    return mediaPilaresPercentual / 10;
+  }, [mediaPilaresPercentual]);
+
   if (loading) {
     return <Loading />;
   }
@@ -181,12 +201,12 @@ const Resultado: React.FC = () => {
           <div className="rounded-xl border border-white/70 bg-white/72 p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] backdrop-blur-md sm:p-6">
             <h1 className="text-xl font-semibold text-[#3f4c36] sm:text-2xl">Sem resultados disponíveis</h1>
             <p className="mt-2 text-sm text-[#5a6251] sm:text-base">
-              Você ainda não concluiu o questionário ou não há resultados para exibir.
+              Você ainda não concluiu a avaliação ou não há resultados para exibir.
             </p>
             <Button
               onClick={() => navigate("/questionario")}
               variant="primary"
-              label="Responder Questionário"
+              label="Responder Avaliação"
               className="mt-5"
             />
           </div>
@@ -197,6 +217,7 @@ const Resultado: React.FC = () => {
 
   const { percentualGlobal, classificacao, dataConclusao } = resultadoData;
   const narrativaGlobal = getFaixaNarrativa(percentualGlobal);
+  const percentualGlobalResumo = Math.round(percentualGlobal);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -277,6 +298,20 @@ const Resultado: React.FC = () => {
         </h3>
 
         <div className="mt-3 rounded-xl border border-white/70 bg-white/72 p-2 shadow-[0_14px_34px_rgba(24,28,20,0.12)] backdrop-blur-md sm:p-4">
+          <div className="mb-3 flex items-center justify-between rounded-xl border border-[#dce4cf] bg-[#f7faf2] px-3 py-2.5 sm:px-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#6c785f] sm:text-sm">
+              Nota final (média dos pilares)
+            </p>
+            <div className="text-right">
+              <p className="text-sm font-bold text-[#3f4c36] sm:text-base">
+                {formatPercentual(mediaPilaresPercentual)}
+              </p>
+              <p className="text-xs font-medium text-[#5f6f52] sm:text-sm">
+                {formatNotaDez(mediaPilaresNotaDez)} / 10
+              </p>
+            </div>
+          </div>
+
           <div className="h-[320px] sm:h-[380px]">
             <ResponsiveContainer width="100%" height="100%">
               <RadialBarChart
@@ -340,28 +375,60 @@ const Resultado: React.FC = () => {
         </div>
 
         {!isSubscriber && (
-          <section className="mt-8 rounded-2xl border border-[#d6e0c7] bg-gradient-to-br from-[#f8fced] via-[#f2f8e7] to-[#edf4e0] p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] sm:p-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#6d7a5d]">Prévia do Premium</p>
-            <h4 className="mt-2 text-lg font-semibold text-[#334329] sm:text-xl">
-              EU JÁ BOLEI UM PLANO EXCLUSIVO E PERSONALIZADO PARA VOCÊ.
+          <section className="mt-8 rounded-2xl border border-[#dce5cf] bg-white/86 p-5 shadow-[0_14px_34px_rgba(24,28,20,0.1)] sm:p-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6d7a5d]">
+              Seu potencial de evolução
+            </p>
+            <h4 className="mt-2 text-xl font-semibold text-[#334329] sm:text-2xl">
+              Você tem espaço real para avançar com consistência.
             </h4>
-            <p className="mt-1 text-sm font-medium text-[#536248] sm:text-base">
-              Essa prévia mostra o começo da sua virada. Desbloqueie o Premium e receba o plano completo agora.
+            <p className="mt-3 text-sm leading-relaxed text-[#4f5a45] sm:text-base">
+              Hoje seu índice geral de consistência é <b>{percentualGlobalResumo}%</b>.
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-[#4f5a45] sm:text-base">
+              Com ajustes simples de rotina e acompanhamento diário, mulheres no mesmo cenário
+              costumam atingir <b>70% a 80%</b> em poucos meses.
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-[#4f5a45] sm:text-base">
+              O plano Premium da IRYA foi criado exatamente para ajudar você a fazer essa evolução
+              acontecer.
+            </p>
+          </section>
+        )}
+
+        {!isSubscriber && (
+          <section className="mt-8 rounded-2xl border border-[#d6e0c7] bg-gradient-to-br from-[#f8fced] via-[#f2f8e7] to-[#edf4e0] p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] sm:p-6">
+            <h4 className="text-xl font-semibold text-[#334329] sm:text-2xl">
+              Seu plano personalizado já está pronto
+            </h4>
+
+            <div className="mt-4 rounded-2xl border border-[#dce5cf] bg-white/86 p-4 shadow-[0_8px_20px_rgba(24,28,20,0.08)] sm:p-5">
+              <div className="flex items-start gap-3 sm:gap-4">
+                <img
+                  src={iryaSaudando}
+                  alt="Irya apresentando o plano personalizado"
+                  className="h-16 w-16 shrink-0 rounded-full border-2 border-[#bfd0ae] object-cover object-[50%_24%] shadow-[0_10px_20px_rgba(70,93,57,0.18)] sm:h-20 sm:w-20"
+                />
+                <div className="relative flex-1 rounded-xl border border-[#dfe7d3] bg-[#fbfdf7] p-3 text-sm leading-relaxed text-[#4f5a45] sm:text-base">
+                  <div className="absolute -left-2 top-5 h-4 w-4 rotate-45 border-b border-l border-[#dfe7d3] bg-[#fbfdf7]" />
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#6e7f61]">Irya</p>
+                  <p className="mt-1">
+                    Eu analisei seu resultado e organizei um plano simples para melhorar seus
+                    pilares de saúde.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-[#6d7a5d]">
+              Plano criado a partir do seu resultado
             </p>
 
-            <div className="relative mt-5 overflow-hidden rounded-xl border border-[#dce5cf] bg-white/80 p-4">
+            <div className="relative mt-3 overflow-hidden rounded-xl border border-[#dce5cf] bg-white/84 p-4">
               <div className="pointer-events-none absolute inset-0 z-20 bg-white/25 backdrop-blur-[4px]" />
-              <div className="pointer-events-none absolute inset-0 z-40 flex items-center justify-center">
-                <span className="inline-flex h-16 w-16 items-center justify-center rounded-full border border-[#cddbbc] bg-[#f3f8ea]/95 text-[#5f7450] shadow-[0_10px_20px_rgba(36,49,30,0.18)]">
-                  <FiLock className="h-7 w-7" />
-                </span>
-              </div>
               <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-16 bg-gradient-to-t from-[#edf4e0] to-transparent" />
 
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#6f7d63]">
-                Prévia do plano exclusivo
-              </p>
-              <div className="mt-3 grid gap-2 text-sm text-[#4f5a45] sm:grid-cols-2">
+              <div className="relative z-10 grid gap-2 text-sm text-[#4f5a45] sm:grid-cols-2">
                 <div className="rounded-lg border border-[#e5ebdb] bg-[#f8fbf3] p-3">
                   Pilar prioritário da semana: Energia e Sono
                 </div>
@@ -375,16 +442,31 @@ const Resultado: React.FC = () => {
                   Ajustes de estilo de vida com acompanhamento
                 </div>
               </div>
+
+              <div className="absolute inset-0 z-40 flex items-center justify-center">
+                <button
+                  type="button"
+                  onClick={() => navigate("/assinatura")}
+                  className="inline-flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border border-[#cddbbc] bg-[#f3f8ea]/95 text-[#5f7450] shadow-[0_10px_20px_rgba(36,49,30,0.18)] transition hover:scale-[1.04] hover:bg-[#eef5e2]"
+                  aria-label="Desbloquear plano personalizado"
+                >
+                  <FiLock className="h-7 w-7" />
+                </button>
+              </div>
             </div>
 
-            <ChatOffer
-              className="mt-5"
-              avatarSrc={iryaSaudando}
-              message="Seu resultado já mostrou o próximo passo. No Premium, eu transformo isso em um plano exclusivo e te acompanho diariamente para manter constância."
-              priceLine="R$ 49,00/mês."
-              policyLine="Cancele online a qualquer momento."
-              ctaLabel="Quero continuar com meu plano exclusivo"
+            <div className="mt-5">
+              <p className="text-2xl font-semibold text-[#334329]">R$49/mês</p>
+              <p className="mt-1 text-sm text-[#4f5a45] sm:text-base">
+                Cancele com facilidade quando quiser.
+              </p>
+            </div>
+
+            <Button
               onClick={() => navigate("/assinatura")}
+              variant="primary"
+              label="Desbloquear meu plano personalizado"
+              className="mt-5"
             />
           </section>
         )}

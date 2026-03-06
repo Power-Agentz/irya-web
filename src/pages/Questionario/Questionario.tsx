@@ -5,7 +5,15 @@ import Container from "../../components/Container/Container";
 import Button from "../../components/Button/Button";
 import Loading from "../../components/Loading/Loading";
 import BackButton from "../../components/BackButton/BackButton";
+import AssessmentFinalizingOverlay from "../../components/AssessmentFinalizingOverlay/AssessmentFinalizingOverlay";
 import { getApiErrorMessage } from "../../utils/errors";
+import iryaReceptiva from "../../../assets/irya-receptiva.png";
+import iryaSaudando from "../../../assets/irya-saudando.png";
+import iryaPensando from "../../../assets/irya-pensando.png";
+import iryaFrontal from "../../../assets/irya-de-frente.png";
+import iryaGrata from "../../../assets/irya-grata.png";
+
+const FINALIZATION_DELAY_MS = 5600;
 
 interface Pergunta {
   id: number;
@@ -41,11 +49,10 @@ const formatAlturaInput = (value: string): string => {
   const digits = value.replace(/\D/g, "").slice(0, 3);
   if (!digits) return "";
 
-  const padded = digits.padStart(3, "0");
-  const intPart = String(Number(padded.slice(0, 1)));
-  const decimalPart = padded.slice(1);
+  if (digits.length === 1) return digits;
+  if (digits.length === 2) return `${digits[0]},${digits[1]}`;
 
-  return `${intPart},${decimalPart}`;
+  return `${digits[0]},${digits.slice(1, 3)}`;
 };
 
 const parseAlturaInput = (value: string): number | null => {
@@ -67,6 +74,46 @@ type QuestionarioStatusPayload = {
   pesoAtualKg: number | null;
 };
 
+type IryaDialogueStage = {
+  maxProgress: number;
+  avatarSrc: string;
+  avatarAlt: string;
+  message: string;
+};
+
+const IRYA_DIALOGUE_STAGES: IryaDialogueStage[] = [
+  {
+    maxProgress: 0.16,
+    avatarSrc: iryaReceptiva,
+    avatarAlt: "Irya receptiva guiando o início da avaliação",
+    message: "Começamos pelo essencial. Me mostre seu ponto de partida.",
+  },
+  {
+    maxProgress: 0.36,
+    avatarSrc: iryaSaudando,
+    avatarAlt: "Irya saudando durante o avanço da avaliação",
+    message: "Ótimo ritmo. Já estou mapeando padrões da sua rotina.",
+  },
+  {
+    maxProgress: 0.58,
+    avatarSrc: iryaFrontal,
+    avatarAlt: "Irya em posição frontal acompanhando a evolução da etapa",
+    message: "Metade concluída. Vamos transformar percepção em direção prática.",
+  },
+  {
+    maxProgress: 0.82,
+    avatarSrc: iryaPensando,
+    avatarAlt: "Irya pensativa refinando a leitura personalizada",
+    message: "Agora refinamos os detalhes do seu plano personalizado.",
+  },
+  {
+    maxProgress: 1,
+    avatarSrc: iryaGrata,
+    avatarAlt: "Irya com expressão de gratidão no encerramento da avaliação",
+    message: "Últimos passos. Sua leitura já está quase pronta.",
+  },
+];
+
 const Questionario: React.FC = () => {
   const navigate = useNavigate();
 
@@ -79,6 +126,7 @@ const Questionario: React.FC = () => {
   const [alturaInput, setAlturaInput] = useState<string>("");
   const [alturaBloqueada, setAlturaBloqueada] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [showFinalizingOverlay, setShowFinalizingOverlay] = useState(false);
 
   const allQuestions: Pergunta[] = useMemo(() => {
     return pilaresData.flatMap((pilar) =>
@@ -139,7 +187,7 @@ const Questionario: React.FC = () => {
           setPesoAtualInput(formatPesoInput(pesoAtualKg));
         }
       } catch (err) {
-        setError("Falha ao carregar o questionário. Tente fazer login novamente.");
+        setError("Falha ao carregar a avaliação. Tente fazer login novamente.");
         console.error("Erro ao buscar estrutura:", err);
       } finally {
         setIsFetching(false);
@@ -189,23 +237,19 @@ const Questionario: React.FC = () => {
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      setIsSubmitting(true);
 
       if (parsedPesoAtual === null) {
         setError("Informe seu peso atual em kg para finalizar.");
-        setIsSubmitting(false);
         return;
       }
 
       if (parsedAltura === null) {
         setError("Informe sua altura no formato 0,00m para finalizar.");
-        setIsSubmitting(false);
         return;
       }
 
       if (Object.keys(answers).length !== totalQuestions) {
         setError("Erro interno: Nem todas as perguntas foram respondidas.");
-        setIsSubmitting(false);
         return;
       }
 
@@ -231,11 +275,15 @@ const Questionario: React.FC = () => {
         setError(
           "Erro na montagem do payload. Verifique se todas as perguntas foram carregadas corretamente.",
         );
-        setIsSubmitting(false);
         return;
       }
 
       setError(null);
+      setIsSubmitting(true);
+      setShowFinalizingOverlay(true);
+
+      const requestStartTime = Date.now();
+      let resetSubmittingOnFinally = true;
 
       try {
         await api.post("/questionario/submeter", {
@@ -243,8 +291,18 @@ const Questionario: React.FC = () => {
           alturaM: parsedAltura,
           respostas: submissionData,
         });
+
+        const elapsedMs = Date.now() - requestStartTime;
+        const remainingDelay = Math.max(FINALIZATION_DELAY_MS - elapsedMs, 0);
+
+        if (remainingDelay > 0) {
+          await new Promise((resolve) => window.setTimeout(resolve, remainingDelay));
+        }
+
+        resetSubmittingOnFinally = false;
         navigate("/resultado");
       } catch (err: unknown) {
+        setShowFinalizingOverlay(false);
         setError(
           getApiErrorMessage(
             err,
@@ -252,7 +310,9 @@ const Questionario: React.FC = () => {
           ),
         );
       } finally {
-        setIsSubmitting(false);
+        if (resetSubmittingOnFinally) {
+          setIsSubmitting(false);
+        }
       }
     },
     [answers, navigate, parsedAltura, parsedPesoAtual, questionMap, totalQuestions],
@@ -279,16 +339,10 @@ const Questionario: React.FC = () => {
       ? answers[currentQuestion.id] !== undefined
       : false;
 
-  const getMotivationalText = (progress: number) => {
-    if (progress <= 0.15) return "Começamos pelo que mais importa hoje.";
-    if (progress <= 0.35) return "Estamos entendendo sua rotina.";
-    if (progress <= 0.7) return "Seu plano está tomando forma.";
-    if (progress < 1) return "Estamos finalizando tudo para você.";
-    return "Pronto. Agora é com você.";
-  };
-
   const progress = (currentStepIndex + 1) / totalSteps;
-  const motivationalText = getMotivationalText(progress);
+  const iryaDialogue =
+    IRYA_DIALOGUE_STAGES.find((stage) => progress <= stage.maxProgress) ??
+    IRYA_DIALOGUE_STAGES[IRYA_DIALOGUE_STAGES.length - 1];
 
   return (
     <Container>
@@ -296,10 +350,8 @@ const Questionario: React.FC = () => {
         <BackButton />
 
         <h1 className="text-2xl font-semibold text-[#3f4c36] sm:text-3xl">
-          Ritual de Florescimento
+          Avaliação de Estilo de Vida
         </h1>
-
-        <p className="mt-1 text-sm italic text-[#5f6657] sm:text-base">{motivationalText}</p>
 
         <div className="mt-4 h-2.5 w-full rounded-full bg-[#e3e6de]">
           <div
@@ -308,13 +360,33 @@ const Questionario: React.FC = () => {
           />
         </div>
 
-        <p className="mt-2 text-xs font-medium text-[#66705d] sm:text-sm">
-          Etapa {currentStepIndex + 1} de {totalSteps}
-        </p>
+        <section className="mt-4 rounded-2xl border border-[#d7e2c9] bg-gradient-to-r from-[#f6faef] to-[#edf5e2] p-2.5 shadow-[0_8px_20px_rgba(42,54,34,0.08)] sm:p-3">
+          <div className="flex items-start gap-3">
+            <div className="relative shrink-0">
+              <span className="irya-avatar-ring-outer pointer-events-none absolute inset-[-10px] rounded-full border border-[#79b56f]/55" />
+              <span className="irya-avatar-ring-inner pointer-events-none absolute inset-[-5px] rounded-full border-2 border-[#79b56f]/70" />
+              <img
+                src={iryaDialogue.avatarSrc}
+                alt={iryaDialogue.avatarAlt}
+                className="relative h-16 w-16 rounded-full border-2 border-[#bfd0ae] object-cover object-[50%_22%] shadow-[0_10px_20px_rgba(70,93,57,0.2)] sm:h-24 sm:w-24"
+              />
+            </div>
+
+            <div className="relative flex-1">
+              <div className="absolute -left-2 top-6 h-4 w-4 rotate-45 border-b border-l border-[#dbe5ce] bg-white/90" />
+              <div className="rounded-xl border border-[#dbe5ce] bg-white/90 p-2.5 text-sm text-[#4f5a45] shadow-[0_8px_16px_rgba(42,54,34,0.08)] sm:p-3 sm:text-[15px]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6d7a5d]">
+                  Irya
+                </p>
+                <p className="mt-1 leading-relaxed">{iryaDialogue.message}</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <form onSubmit={handleSubmit} className="mt-5 sm:mt-6">
           {isWeightStep ? (
-            <section className="rounded-xl border border-[#e8ebdf] bg-white/82 p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)] sm:p-6">
+            <section className="min-h-[430px] rounded-xl border border-[#e8ebdf] bg-white/82 p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)] sm:min-h-[420px] sm:p-6">
               <h2 className="text-lg font-semibold text-[#5f6f52] sm:text-xl">
                 Seus dados físicos atuais
               </h2>
@@ -361,6 +433,7 @@ const Questionario: React.FC = () => {
                       type="text"
                       inputMode="decimal"
                       placeholder="Ex.: 1,65"
+                      maxLength={4}
                       value={alturaInput}
                       disabled={alturaBloqueada}
                       onChange={(e) => {
@@ -381,7 +454,7 @@ const Questionario: React.FC = () => {
             </section>
           ) : (
             currentQuestion && (
-              <section className="rounded-xl border border-[#e8ebdf] bg-white/82 p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)] sm:p-6">
+              <section className="min-h-[430px] rounded-xl border border-[#e8ebdf] bg-white/82 p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)] sm:min-h-[420px] sm:p-6">
                 <h2 className="text-lg font-semibold text-[#5f6f52] sm:text-xl">
                   {currentQuestion.pilarNome}
                 </h2>
@@ -438,18 +511,20 @@ const Questionario: React.FC = () => {
                 variant="secondary"
                 label="Voltar para pergunta anterior"
                 disabled={isSubmitting}
+                className="order-2 sm:order-1"
               />
             ) : (
-              <span className="hidden sm:block" />
+              <span className="hidden sm:order-1 sm:block" />
             )}
 
             {isLastStep ? (
               <Button
                 type="submit"
                 variant="primary"
-                label={isSubmitting ? "Enviando..." : "Finalizar Questionário"}
+                label={isSubmitting ? "Enviando..." : "Finalizar Avaliação"}
                 loading={isSubmitting}
                 disabled={!isCurrentAnswered || isSubmitting}
+                className="order-1 sm:order-2"
               />
             ) : (
               <Button
@@ -458,11 +533,13 @@ const Questionario: React.FC = () => {
                 label="Próxima pergunta"
                 type="button"
                 disabled={!isCurrentAnswered || isSubmitting}
+                className="order-1 sm:order-2"
               />
             )}
           </div>
         </form>
       </div>
+      <AssessmentFinalizingOverlay visible={showFinalizingOverlay} />
     </Container>
   );
 };

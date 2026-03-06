@@ -7,7 +7,13 @@ interface BrandLogoProps {
 const BrandLogo = ({ className = "" }: BrandLogoProps) => {
   return (
     <div className={`flex justify-center ${className}`.trim()}>
-      <img src={logo} alt="Irya Logo" className="h-[96px] w-auto sm:h-[112px]" />
+      <img
+        src={logo}
+        alt="Logo da Minha Irya"
+        width={7656}
+        height={3616}
+        className="h-[96px] w-auto sm:h-[112px]"
+      />
     </div>
   );
 };

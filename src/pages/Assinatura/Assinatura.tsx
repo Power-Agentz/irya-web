@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { FiCheckCircle, FiCreditCard, FiExternalLink, FiLock, FiShield } from "react-icons/fi";
+import { FiCheckCircle, FiShield } from "react-icons/fi";
 import Button from "../../components/Button/Button";
 import BackButton from "../../components/BackButton/BackButton";
 import Container from "../../components/Container/Container";
@@ -49,7 +49,6 @@ const Assinatura = () => {
   const [cancelLoading, setCancelLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<SubscriptionStatusResponse | null>(null);
-  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [cpfCnpj, setCpfCnpj] = useState("");
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const isSubscriber = status?.isSubscriber === true;
@@ -86,7 +85,6 @@ const Assinatura = () => {
       const response = await api.post<CheckoutResponse>("/subscription/checkout", {
         cpfCnpj: digits,
       });
-      setCheckoutUrl(response.data.checkoutUrl);
       setStatus((current) =>
         current
           ? {
@@ -170,127 +168,94 @@ const Assinatura = () => {
                   ? `${nome}, seu Premium está ativo`
                   : "Seu Premium está ativo"
                 : nome
-                  ? `${nome}, ative seu Premium mensal`
-                  : "Ative seu Premium mensal"}
+                  ? `${nome}, seu plano personalizado está pronto.`
+                  : "Seu plano personalizado está pronto."}
             </h1>
             {isSubscriber && <PremiumBadge />}
           </div>
           <p className="mt-3 text-sm leading-relaxed text-[#56614b] sm:text-base">
             {isSubscriber
-              ? "Sua assinatura está ativa. Aqui você acompanha o status e gerencia seu plano com total liberdade."
-              : "Você será redirecionada para a plataforma Asaas para concluir o pagamento em ambiente seguro."}
+              ? "Sua assinatura está ativa. Aqui você gerencia o plano premium e o cancelamento quando quiser."
+              : "Ative o Premium para liberar seu plano e começar hoje."}
           </p>
-          <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <div className="inline-flex items-center gap-2 rounded-xl border border-[#d7e2cb] bg-[#f7fbf2] px-3 py-2 text-sm text-[#516148]">
-              <FiShield className="h-4 w-4" />
-              Plataforma de pagamento verificada
-            </div>
-            <div className="inline-flex items-center gap-2 rounded-xl border border-[#d7e2cb] bg-[#f7fbf2] px-3 py-2 text-sm text-[#516148]">
-              <FiLock className="h-4 w-4" />
-              Processo criptografado e protegido
-            </div>
+
+          <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-[#d7e2cb] bg-[#f7fbf2] px-3 py-2 text-sm text-[#516148]">
+            <FiShield className="h-4 w-4" />
+            Pagamento seguro via Asaas
           </div>
 
           {loading ? (
             <p className="mt-6 text-sm text-[#5c6951]">Carregando status da assinatura...</p>
+          ) : isSubscriber ? (
+            <article className="mt-6 rounded-2xl border border-[#e1e8d7] bg-[#f8fbf3] p-4">
+              <p className="text-sm font-semibold text-[#41503a]">Assinatura ativa</p>
+              <p className="mt-1 text-sm text-[#55634a]">
+                Início: {formatDate(status?.subscriptionStartedAt ?? null)}
+              </p>
+              <p className="mt-1 text-sm text-[#55634a]">
+                Cancelamento: {formatDate(status?.subscriptionCanceledAt ?? null)}
+              </p>
+              <div className="mt-4 rounded-xl border border-[#d8e2cc] bg-gradient-to-r from-[#f8fbf3] to-[#eef5e4] p-3">
+                <p className="text-sm text-[#52624b]">
+                  Seu plano personalizado está liberado e o acompanhamento premium segue ativo.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCancelDialogOpen(true)}
+                className="mt-4 inline-flex h-10 cursor-pointer items-center rounded-lg border border-[#efc0c0] bg-[#fff1f1] px-3 text-sm font-semibold text-[#9b3131] transition hover:bg-[#ffe4e4]"
+              >
+                Cancelar assinatura
+              </button>
+            </article>
           ) : (
-            <div className={`mt-6 grid gap-4 ${isSubscriber ? "grid-cols-1" : "sm:grid-cols-2"}`}>
-              <article className="rounded-2xl border border-[#e1e8d7] bg-[#f8fbf3] p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-[#6e7a60]">
-                  Status atual
+            <article className="mt-6 rounded-2xl border border-[#d4dfc6] bg-gradient-to-br from-[#f8fcee] via-[#f2f8e7] to-[#ebf3de] p-4 sm:p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#5f7252]">
+                Plano Premium
+              </p>
+
+              <div className="mt-3 space-y-2.5">
+                <p className="inline-flex items-center gap-2 text-sm text-[#42503a] sm:text-base">
+                  <FiCheckCircle className="h-4 w-4 text-[#6f8a5d]" />
+                  Plano personalizado baseado no seu resultado
                 </p>
-                <p className="mt-2 text-sm font-semibold text-[#41503a]">
-                  {isSubscriber ? "Assinante ativa" : "Plano gratuito"}
+                <p className="inline-flex items-center gap-2 text-sm text-[#42503a] sm:text-base">
+                  <FiCheckCircle className="h-4 w-4 text-[#6f8a5d]" />
+                  Acompanhamento diário da Irya
                 </p>
-                <p className="mt-1 text-sm text-[#55634a]">
-                  Início: {formatDate(status?.subscriptionStartedAt ?? null)}
+                <p className="inline-flex items-center gap-2 text-sm text-[#42503a] sm:text-base">
+                  <FiCheckCircle className="h-4 w-4 text-[#6f8a5d]" />
+                  Ajustes práticos na sua rotina
                 </p>
-                <p className="mt-1 text-sm text-[#55634a]">
-                  Cancelamento: {formatDate(status?.subscriptionCanceledAt ?? null)}
-                </p>
-                {isSubscriber && (
-                  <button
-                    type="button"
-                    onClick={() => setCancelDialogOpen(true)}
-                    className="mt-3 inline-flex h-10 cursor-pointer items-center rounded-lg border border-[#efc0c0] bg-[#fff1f1] px-3 text-sm font-semibold text-[#9b3131] transition hover:bg-[#ffe4e4]"
-                  >
-                    Cancelar assinatura
-                  </button>
-                )}
-                {isSubscriber && (
-                  <div className="mt-4 rounded-xl border border-[#d8e2cc] bg-gradient-to-r from-[#f8fbf3] to-[#eef5e4] p-3">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-[#6e7a60]">
-                      Benefícios ativos
-                    </p>
-                    <p className="mt-1 text-sm text-[#52624b]">
-                      Seu plano personalizado está liberado e o acompanhamento premium segue ativo.
-                    </p>
-                  </div>
-                )}
-              </article>
+              </div>
 
-              {!isSubscriber && (
-                <article className="rounded-2xl border border-[#d4dfc6] bg-gradient-to-br from-[#f8fcee] via-[#f2f8e7] to-[#ebf3de] p-4">
-                  <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#5f7252]">
-                    <FiCreditCard className="h-4 w-4" />
-                    Plano mensal
-                  </p>
-                  <p className="mt-2 text-xl font-semibold text-[#384835]">R$ 49,00 / mês</p>
-                  <p className="mt-1 text-sm text-[#55634a]">
-                    Assinatura mensal recorrente exclusiva no cartão de crédito via Asaas.
-                  </p>
+              <div className="mt-4">
+                <p className="text-2xl font-semibold text-[#384835]">R$49/mês</p>
+                <p className="mt-1 text-sm text-[#55634a]">Assinatura recorrente mensal</p>
+              </div>
 
-                  <div className="mt-3">
-                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#647558]">
-                      CPF ou CNPJ
-                    </label>
-                    <input
-                      type="text"
-                      value={cpfCnpj}
-                      onChange={(e) => setCpfCnpj(e.target.value)}
-                      placeholder="Digite seu CPF/CNPJ"
-                      className="h-11 w-full rounded-xl border border-[#d5decb] bg-white/90 px-3 text-sm text-[#334234] outline-none transition focus:border-[#96a88b] focus:ring-2 focus:ring-[#a5b798]/30"
-                    />
-                  </div>
+              <div className="mt-4">
+                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#647558]">
+                  CPF ou CNPJ
+                </label>
+                <input
+                  type="text"
+                  value={cpfCnpj}
+                  onChange={(e) => setCpfCnpj(e.target.value)}
+                  placeholder="Digite seu CPF/CNPJ"
+                  className="h-11 w-full rounded-xl border border-[#d5decb] bg-white/90 px-3 text-sm text-[#334234] outline-none transition focus:border-[#96a88b] focus:ring-2 focus:ring-[#a5b798]/30"
+                />
+              </div>
 
-                  <div className="mt-4">
-                    <Button
-                      variant="primary"
-                      label="Continuar"
-                      onClick={() => void handleCheckout()}
-                      loading={checkoutLoading}
-                    />
-                  </div>
-                  <p className="mt-3 text-xs text-[#65735c]">
-                    Ao continuar, você será redirecionada para o checkout seguro do Asaas.
-                  </p>
-                  <p className="mt-2 text-xs text-[#65735c]">
-                    Cancelamento simples, online e em poucos cliques, sem burocracia.
-                  </p>
-                </article>
-              )}
-            </div>
-          )}
-
-          {checkoutUrl && !isSubscriber && (
-            <a
-              href={checkoutUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-[#5d7250] underline underline-offset-2"
-            >
-              Abrir pagamento em nova aba
-              <FiExternalLink className="h-4 w-4" />
-            </a>
-          )}
-
-          {isSubscriber && (
-            <div className="mt-4 rounded-xl border border-[#cfe1bc] bg-[#f1f8e6] p-3 text-sm font-medium text-[#46603a]">
-              <span className="inline-flex items-center gap-2">
-                <FiCheckCircle className="h-4 w-4" />
-                Sua conta já está marcada como assinante.
-              </span>
-            </div>
+              <div className="mt-4">
+                <Button
+                  variant="primary"
+                  label="Ativar Premium agora"
+                  onClick={() => void handleCheckout()}
+                  loading={checkoutLoading}
+                />
+              </div>
+            </article>
           )}
 
           {error && (

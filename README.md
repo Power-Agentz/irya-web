@@ -1,6 +1,6 @@
 # Irya Web
 
-Frontend application for the Irya portal.
+Frontend application for Minha Irya.
 
 ## Stack
 

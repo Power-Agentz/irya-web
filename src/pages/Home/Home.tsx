@@ -107,16 +107,16 @@ const Home = () => {
               <div>
                 <header className="space-y-3">
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d7a5d]">
-                    Bem-vindo ao Portal Irya <span className="ml-0.5 text-xs">©</span>
+                    Bem-vinda à Minha Irya <span className="ml-0.5 text-xs">©</span>
                   </p>
-                  <div className="flex max-w-[32rem] flex-wrap items-center gap-2">
+                  <div className="flex max-w-[32rem] flex-wrap items-center gap-2 mb-0">
                     <h1 className="font-['Iowan_Old_Style','Georgia',serif] text-2xl font-medium tracking-tight text-[#34412d] sm:text-4xl">
-                      {nome ? `Olá, ${nome}` : "Olá"}
+                      {nome ? `Olá, ${nome}.` : "Olá"}
                     </h1>
                     {isSubscriber && <PremiumBadge />}
                   </div>
                   <h2 className="font-['Iowan_Old_Style','Georgia',serif] text-2xl font-medium tracking-tight text-[#34412d] sm:text-4xl">
-                    vamos começar seu primeiro ritual?
+                    Vamos começar seu primeiro ritual?
                   </h2>
                   <p className="max-w-[56ch] text-sm leading-relaxed text-[#4f5a45] sm:text-base">
                     Seu primeiro check-in leva poucos minutos e inaugura o acompanhamento da sua evolução.
@@ -127,7 +127,7 @@ const Home = () => {
                   <Button
                     onClick={() => navigate("/questionario")}
                     variant="primary"
-                    label="Iniciar questionário de estilo de vida"
+                    label="Iniciar avaliação de estilo de vida"
                   />
                   <p className="text-center text-xs font-medium text-[#6d7762] sm:text-sm">
                     Leva menos de 5 minutos para concluir.
@@ -174,7 +174,7 @@ const Home = () => {
               <div className="rounded-xl border border-[#e7ebde] bg-[#f7f9f2] p-4">
                 <p className="text-sm font-semibold text-[#3f4c36]">1. Responda</p>
                 <p className="mt-1 text-sm text-[#59664f]">
-                  Preencha seu primeiro questionário de estilo de vida em poucos minutos.
+                  Preencha sua primeira avaliação de estilo de vida em poucos minutos.
                 </p>
               </div>
               <div className="rounded-xl border border-[#e7ebde] bg-[#f7f9f2] p-4">
@@ -207,7 +207,7 @@ const Home = () => {
                   Check-in mensal liberado
                 </p>
                 <h2 className="text-lg font-semibold text-[#34412d] sm:text-xl">
-                  Seu questionário já pode ser respondido
+                  Sua avaliação já pode ser respondida
                 </h2>
                 <p className="text-sm leading-relaxed text-[#4f5548] sm:text-base">
                   Leva menos de 5 minutos e ajuda a manter sua evolução alinhada
@@ -225,7 +225,7 @@ const Home = () => {
               <Button
                 onClick={() => navigate("/questionario")}
                 variant="primary"
-                label="Iniciar questionário agora"
+                label="Iniciar avaliação agora"
               />
 
               <div className="grid grid-cols-1 gap-3">
@@ -257,7 +257,7 @@ const Home = () => {
           <ChatOffer
             className="mb-5 sm:mb-6"
             avatarSrc={iryaGratidao}
-            message="Seu questionário de estilo de vida já abriu o caminho. No Premium, eu continuo com você no dia a dia com um plano exclusivo, metas claras e ajustes rápidos conforme sua evolução."
+            message="Sua avaliação de estilo de vida já abriu o caminho. No Premium, eu continuo com você no dia a dia com um plano exclusivo, metas claras e ajustes rápidos conforme sua evolução."
             priceLine="R$ 49,00/mês."
             policyLine="Cancele online a qualquer momento."
             ctaLabel="Liberar meu plano exclusivo"
@@ -267,7 +267,7 @@ const Home = () => {
 
         <section className="rounded-2xl border border-white/70 bg-white/70 p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] backdrop-blur-md sm:p-7">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6f7d63]">
-            Portal Irya <span className="ml-0.5 text-xs">©</span>
+            Minha Irya <span className="ml-0.5 text-xs">©</span>
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-semibold text-[#3c4934] sm:text-3xl">
@@ -322,7 +322,7 @@ const Home = () => {
             </p>
             <p className="mt-1 text-sm text-[#5d6a50]">
               {pesoAtualKg === null
-                ? "Seu primeiro registro será salvo ao concluir o próximo questionário."
+                ? "Seu primeiro registro será salvo ao concluir a próxima avaliação."
                 : getVariacaoPesoTexto(variacaoPesoKg)}
             </p>
 
@@ -349,7 +349,7 @@ const Home = () => {
               Frequência do check-in
             </p>
             <p className="mt-2 text-sm font-medium text-[#46533e] sm:text-base">
-              O questionário é mensal e deve ser respondido a cada 30 dias.
+              A avaliação é mensal e deve ser respondida a cada 30 dias.
             </p>
           </div>
         </section>

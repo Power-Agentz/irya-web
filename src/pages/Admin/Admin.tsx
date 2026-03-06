@@ -330,7 +330,13 @@ const Admin = () => {
       <main className="relative min-h-dvh w-full overflow-hidden bg-[radial-gradient(1200px_640px_at_10%_-6%,rgba(136,156,117,0.26),transparent_58%),radial-gradient(980px_560px_at_96%_100%,rgba(180,157,114,0.18),transparent_63%),linear-gradient(180deg,#243629_0%,#1e2f24_52%,#17261d_100%)] text-[#334234]">
         <section className="mx-auto flex min-h-dvh w-full max-w-[1180px] items-center justify-center px-5 py-8 sm:px-8">
           <article className="w-full max-w-[560px] rounded-[32px] border border-white/70 bg-white/92 p-7 shadow-[0_30px_70px_rgba(45,57,39,0.16)] backdrop-blur sm:p-10">
-            <img src={logoIrya} alt="Logo Portal Irya" className="h-14 w-auto" />
+            <img
+              src={logoIrya}
+              alt="Logo Minha Irya"
+              width={7656}
+              height={3616}
+              className="h-14 w-auto"
+            />
             <div className="mt-6 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#eff4e8] text-[#5a6d4f]">
               <FiLock className="h-5 w-5" />
             </div>
@@ -636,12 +642,12 @@ const Admin = () => {
                 </article>
 
                 <article className="rounded-xl border border-[#e4eadc] bg-[#f9fcf6] p-4">
-                  <h3 className="text-base font-semibold text-[#394836]">Questionários Concluídos</h3>
+                  <h3 className="text-base font-semibold text-[#394836]">Avaliações Concluídas</h3>
                   <div className="mt-3 overflow-x-auto">
                     <table className="w-full min-w-[980px] text-left text-sm">
                       <thead className="text-[#687a5e]">
                         <tr>
-                          <th className="pb-2">Questionário</th>
+                          <th className="pb-2">Avaliação</th>
                           <th className="pb-2">Data de Resposta</th>
                           <th className="pb-2">Pontuação Total</th>
                           {allPilares.map((pilar) => (
@@ -655,7 +661,7 @@ const Admin = () => {
                         {selectedPacienteDetalhes.questionariosConcluidos.length === 0 && (
                           <tr>
                             <td className="py-2 text-[#6f7c66]" colSpan={3 + allPilares.length}>
-                              Sem questionários concluídos.
+                              Sem avaliações concluídas.
                             </td>
                           </tr>
                         )}
@@ -667,7 +673,7 @@ const Admin = () => {
                               selectedQuestionarioId === q.id ? "bg-[#edf4e6]" : ""
                             }`}
                           >
-                            <td className="py-2">{`Questionário ${index + 1}`}</td>
+                            <td className="py-2">{`Avaliação ${index + 1}`}</td>
                             <td className="py-2">{formatDateTime(q.dataConclusao)}</td>
                             <td className="py-2">{q.pontuacaoTotal}</td>
                             {allPilares.map((pilar) => {
@@ -690,7 +696,7 @@ const Admin = () => {
                 {selectedQuestionarioId && (
                   <article className="rounded-xl border border-[#e4eadc] bg-[#f9fcf6] p-4">
                     <h3 className="text-base font-semibold text-[#394836]">
-                      Respostas do Questionário {selectedQuestionarioId}
+                      Respostas da Avaliação {selectedQuestionarioId}
                     </h3>
                     <div className="mt-3 overflow-x-auto">
                       <table className="w-full min-w-[980px] text-left text-sm">
@@ -706,7 +712,7 @@ const Admin = () => {
                           {selectedQuestionarioAnswers.length === 0 && (
                             <tr>
                               <td className="py-2 text-[#6f7c66]" colSpan={4}>
-                                Sem respostas associadas para este questionário.
+                                Sem respostas associadas para esta avaliação.
                               </td>
                             </tr>
                           )}
@@ -735,7 +741,7 @@ const Admin = () => {
             <h3 className="text-lg font-semibold text-[#3c4a39]">Excluir cadastro</h3>
             <p className="mt-2 text-sm text-[#5f6b5c]">
               Você está prestes a excluir <strong>{deleteCandidate.nomeCompleto}</strong> (
-              {deleteCandidate.telefone}). Esta ação remove também histórico de pesos, questionários e
+              {deleteCandidate.telefone}). Esta ação remove também histórico de pesos, avaliações e
               respostas.
             </p>
             <div className="mt-5 flex items-center justify-end gap-2">

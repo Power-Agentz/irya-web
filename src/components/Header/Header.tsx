@@ -77,7 +77,7 @@ const Header: React.FC = () => {
           active: isResultado,
         }
       : {
-          label: "Questionário",
+          label: "Avaliação",
           icon: FiClipboard,
           path: "/questionario",
           visible: podeResponder,
@@ -127,6 +127,8 @@ const Header: React.FC = () => {
             className="h-[48px] w-auto sm:h-[52px]"
             src={logo}
             alt="Logo da Irya"
+            width={7656}
+            height={3616}
           />
         </Link>
 
@@ -204,7 +206,7 @@ const Header: React.FC = () => {
                   className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-[#4f5f43] transition hover:bg-[#f3f6ed]"
                 >
                   <FiClipboard className="h-4 w-4" />
-                  Questionário
+                  Avaliação
                 </button>
               )}
 

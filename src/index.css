@@ -62,6 +62,46 @@
   }
 }
 
+@keyframes iryaLoadingFloat {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.72;
+  }
+  50% {
+    transform: translateY(-8px) scale(1.07);
+    opacity: 1;
+  }
+}
+
+@keyframes iryaLoadingAvatar {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+@keyframes iryaLoadingBar {
+  0% {
+    transform: scaleX(0.34);
+    transform-origin: left;
+    opacity: 0.6;
+  }
+  50% {
+    transform: scaleX(1);
+    transform-origin: left;
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(0.34);
+    transform-origin: right;
+    opacity: 0.6;
+  }
+}
+
 @layer components {
   .irya-avatar-ring-outer {
     animation: iryaPulseOuter 1.8s ease-in-out infinite;
@@ -70,5 +110,17 @@
   .irya-avatar-ring-inner {
     animation: iryaPulseInner 1.8s ease-in-out infinite;
     animation-delay: 0.28s;
+  }
+
+  .irya-loading-float {
+    animation: iryaLoadingFloat 2.5s ease-in-out infinite;
+  }
+
+  .irya-loading-avatar {
+    animation: iryaLoadingAvatar 2.2s ease-in-out infinite;
+  }
+
+  .irya-loading-bar {
+    animation: iryaLoadingBar 2.3s ease-in-out infinite;
   }
 }
