@@ -5,6 +5,7 @@ import BackButton from "../../components/BackButton/BackButton";
 import Container from "../../components/Container/Container";
 import api from "../../api";
 import { getPacientePrimeiroNome, setPaciente, getPaciente } from "../../utils/session";
+import PremiumBadge from "../../components/PremiumBadge/PremiumBadge";
 
 type SubscriptionStatusResponse = {
   telefone: string;
@@ -51,6 +52,7 @@ const Assinatura = () => {
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [cpfCnpj, setCpfCnpj] = useState("");
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const isSubscriber = status?.isSubscriber === true;
 
   const loadStatus = useCallback(async () => {
     setLoading(true);
@@ -161,11 +163,22 @@ const Assinatura = () => {
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d7a5d]">
             Checkout protegido
           </p>
-          <h1 className="mt-2 text-2xl font-semibold text-[#3c4934] sm:text-3xl">
-            {nome ? `${nome}, ative seu plano mensal` : "Ative seu plano mensal"}
-          </h1>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl font-semibold text-[#3c4934] sm:text-3xl">
+              {isSubscriber
+                ? nome
+                  ? `${nome}, seu Premium está ativo`
+                  : "Seu Premium está ativo"
+                : nome
+                  ? `${nome}, ative seu Premium mensal`
+                  : "Ative seu Premium mensal"}
+            </h1>
+            {isSubscriber && <PremiumBadge />}
+          </div>
           <p className="mt-3 text-sm leading-relaxed text-[#56614b] sm:text-base">
-            Você será redirecionada para a plataforma Asaas para concluir o pagamento em ambiente seguro.
+            {isSubscriber
+              ? "Sua assinatura está ativa. Aqui você acompanha o status e gerencia seu plano com total liberdade."
+              : "Você será redirecionada para a plataforma Asaas para concluir o pagamento em ambiente seguro."}
           </p>
           <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div className="inline-flex items-center gap-2 rounded-xl border border-[#d7e2cb] bg-[#f7fbf2] px-3 py-2 text-sm text-[#516148]">
@@ -181,13 +194,13 @@ const Assinatura = () => {
           {loading ? (
             <p className="mt-6 text-sm text-[#5c6951]">Carregando status da assinatura...</p>
           ) : (
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className={`mt-6 grid gap-4 ${isSubscriber ? "grid-cols-1" : "sm:grid-cols-2"}`}>
               <article className="rounded-2xl border border-[#e1e8d7] bg-[#f8fbf3] p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-[#6e7a60]">
                   Status atual
                 </p>
                 <p className="mt-2 text-sm font-semibold text-[#41503a]">
-                  {status?.isSubscriber ? "Assinante ativa" : "Plano gratuito"}
+                  {isSubscriber ? "Assinante ativa" : "Plano gratuito"}
                 </p>
                 <p className="mt-1 text-sm text-[#55634a]">
                   Início: {formatDate(status?.subscriptionStartedAt ?? null)}
@@ -195,7 +208,7 @@ const Assinatura = () => {
                 <p className="mt-1 text-sm text-[#55634a]">
                   Cancelamento: {formatDate(status?.subscriptionCanceledAt ?? null)}
                 </p>
-                {status?.isSubscriber && (
+                {isSubscriber && (
                   <button
                     type="button"
                     onClick={() => setCancelDialogOpen(true)}
@@ -204,51 +217,62 @@ const Assinatura = () => {
                     Cancelar assinatura
                   </button>
                 )}
+                {isSubscriber && (
+                  <div className="mt-4 rounded-xl border border-[#d8e2cc] bg-gradient-to-r from-[#f8fbf3] to-[#eef5e4] p-3">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[#6e7a60]">
+                      Benefícios ativos
+                    </p>
+                    <p className="mt-1 text-sm text-[#52624b]">
+                      Seu plano personalizado está liberado e o acompanhamento premium segue ativo.
+                    </p>
+                  </div>
+                )}
               </article>
 
-              <article className="rounded-2xl border border-[#d4dfc6] bg-gradient-to-br from-[#f8fcee] via-[#f2f8e7] to-[#ebf3de] p-4">
-                <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#5f7252]">
-                  <FiCreditCard className="h-4 w-4" />
-                  Plano mensal
-                </p>
-                <p className="mt-2 text-xl font-semibold text-[#384835]">R$ 49,00 / mês</p>
-                <p className="mt-1 text-sm text-[#55634a]">
-                  Assinatura mensal recorrente exclusiva no cartão de crédito via Asaas.
-                </p>
+              {!isSubscriber && (
+                <article className="rounded-2xl border border-[#d4dfc6] bg-gradient-to-br from-[#f8fcee] via-[#f2f8e7] to-[#ebf3de] p-4">
+                  <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#5f7252]">
+                    <FiCreditCard className="h-4 w-4" />
+                    Plano mensal
+                  </p>
+                  <p className="mt-2 text-xl font-semibold text-[#384835]">R$ 49,00 / mês</p>
+                  <p className="mt-1 text-sm text-[#55634a]">
+                    Assinatura mensal recorrente exclusiva no cartão de crédito via Asaas.
+                  </p>
 
-                <div className="mt-3">
-                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#647558]">
-                    CPF ou CNPJ
-                  </label>
-                  <input
-                    type="text"
-                    value={cpfCnpj}
-                    onChange={(e) => setCpfCnpj(e.target.value)}
-                    placeholder="Digite seu CPF/CNPJ"
-                    className="h-11 w-full rounded-xl border border-[#d5decb] bg-white/90 px-3 text-sm text-[#334234] outline-none transition focus:border-[#96a88b] focus:ring-2 focus:ring-[#a5b798]/30"
-                  />
-                </div>
+                  <div className="mt-3">
+                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#647558]">
+                      CPF ou CNPJ
+                    </label>
+                    <input
+                      type="text"
+                      value={cpfCnpj}
+                      onChange={(e) => setCpfCnpj(e.target.value)}
+                      placeholder="Digite seu CPF/CNPJ"
+                      className="h-11 w-full rounded-xl border border-[#d5decb] bg-white/90 px-3 text-sm text-[#334234] outline-none transition focus:border-[#96a88b] focus:ring-2 focus:ring-[#a5b798]/30"
+                    />
+                  </div>
 
-                <div className="mt-4">
-                  <Button
-                    variant="primary"
-                    label={status?.isSubscriber ? "Assinatura ativa" : "Continuar"}
-                    onClick={() => void handleCheckout()}
-                    disabled={status?.isSubscriber}
-                    loading={checkoutLoading}
-                  />
-                </div>
-                <p className="mt-3 text-xs text-[#65735c]">
-                  Ao continuar, você será redirecionada para o checkout seguro do Asaas.
-                </p>
-                <p className="mt-2 text-xs text-[#65735c]">
-                  Cancelamento simples, online e em poucos cliques, sem burocracia.
-                </p>
-              </article>
+                  <div className="mt-4">
+                    <Button
+                      variant="primary"
+                      label="Continuar"
+                      onClick={() => void handleCheckout()}
+                      loading={checkoutLoading}
+                    />
+                  </div>
+                  <p className="mt-3 text-xs text-[#65735c]">
+                    Ao continuar, você será redirecionada para o checkout seguro do Asaas.
+                  </p>
+                  <p className="mt-2 text-xs text-[#65735c]">
+                    Cancelamento simples, online e em poucos cliques, sem burocracia.
+                  </p>
+                </article>
+              )}
             </div>
           )}
 
-          {checkoutUrl && (
+          {checkoutUrl && !isSubscriber && (
             <a
               href={checkoutUrl}
               target="_blank"
@@ -260,7 +284,7 @@ const Assinatura = () => {
             </a>
           )}
 
-          {status?.isSubscriber && (
+          {isSubscriber && (
             <div className="mt-4 rounded-xl border border-[#cfe1bc] bg-[#f1f8e6] p-3 text-sm font-medium text-[#46603a]">
               <span className="inline-flex items-center gap-2">
                 <FiCheckCircle className="h-4 w-4" />

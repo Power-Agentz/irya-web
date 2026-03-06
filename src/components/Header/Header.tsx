@@ -17,6 +17,7 @@ import {
   getPacientePrimeiroNome,
   isPacienteSubscriber,
 } from "../../utils/session";
+import PremiumBadge from "../PremiumBadge/PremiumBadge";
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -177,9 +178,12 @@ const Header: React.FC = () => {
                 <p className="text-[10px] tracking-[0.14em] text-[#7a876f]">
                   Olá,
                 </p>
-                <p className="text-sm font-semibold text-[#46563c]">
-                  {nome ? nome : "Paciente"}
-                </p>
+                <div className="mt-0.5 flex items-center gap-2">
+                  <p className="text-sm font-semibold text-[#46563c]">
+                    {nome ? nome : "Paciente"}
+                  </p>
+                  {subscriber && <PremiumBadge size="sm" />}
+                </div>
               </div>
 
               <button

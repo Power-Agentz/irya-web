@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuestionarioStatus } from "../../hooks/useQuestionarioStatus";
 import Loading from "../../components/Loading/Loading";
 import { getPacientePrimeiroNome, isPacienteSubscriber } from "../../utils/session";
+import PremiumBadge from "../../components/PremiumBadge/PremiumBadge";
 import iryaReceptiva from "../../../assets/irya-receptiva.png";
 import iryaSaudando from "../../../assets/irya-saudando.png";
 import iryaGratidao from "../../../assets/irya-grata.png";
@@ -80,9 +81,15 @@ const Home = () => {
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d7a5d]">
                     Bem-vindo ao Portal Irya <span className="ml-0.5 text-xs">©</span>
                   </p>
-                  <h1 className="max-w-[20ch] font-['Iowan_Old_Style','Georgia',serif] text-2xl font-medium tracking-tight text-[#34412d] sm:text-4xl">
-                    {nome ? `Olá, ${nome}` : "Olá"}, vamos começar seu primeiro ritual?
-                  </h1>
+                  <div className="flex max-w-[32rem] flex-wrap items-center gap-2">
+                    <h1 className="font-['Iowan_Old_Style','Georgia',serif] text-2xl font-medium tracking-tight text-[#34412d] sm:text-4xl">
+                      {nome ? `Olá, ${nome}` : "Olá"}
+                    </h1>
+                    {isSubscriber && <PremiumBadge />}
+                  </div>
+                  <h2 className="font-['Iowan_Old_Style','Georgia',serif] text-2xl font-medium tracking-tight text-[#34412d] sm:text-4xl">
+                    vamos começar seu primeiro ritual?
+                  </h2>
                   <p className="max-w-[56ch] text-sm leading-relaxed text-[#4f5a45] sm:text-base">
                     Seu primeiro check-in leva poucos minutos e inaugura o acompanhamento da sua evolução.
                   </p>
@@ -235,9 +242,12 @@ const Home = () => {
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6f7d63]">
             Portal Irya <span className="ml-0.5 text-xs">©</span>
           </p>
-          <h1 className="mt-2 text-2xl font-semibold text-[#3c4934] sm:text-3xl">
-            {nome ? `Olá, ${nome}` : "Olá"}
-          </h1>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl font-semibold text-[#3c4934] sm:text-3xl">
+              {nome ? `Olá, ${nome}` : "Olá"}
+            </h1>
+            {isSubscriber && <PremiumBadge />}
+          </div>
           <p className="mt-3 max-w-[56ch] text-sm leading-relaxed text-[#56614b] sm:text-base">
             Aqui você acompanha sua evolução com clareza e em pequenos passos. O
             foco não é perfeição, é constância com leveza.
