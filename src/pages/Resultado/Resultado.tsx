@@ -5,8 +5,6 @@ import {
   RadialBarChart,
   RadialBar,
   ResponsiveContainer,
-  Tooltip,
-  Legend,
 } from "recharts";
 import Container from "../../components/Container/Container";
 import Loading from "../../components/Loading/Loading";
@@ -14,6 +12,8 @@ import Button from "../../components/Button/Button";
 import BackButton from "../../components/BackButton/BackButton";
 import { useQuestionarioStatus } from "../../hooks/useQuestionarioStatus";
 import { isPacienteSubscriber } from "../../utils/session";
+import ChatOffer from "../../components/ChatOffer/ChatOffer";
+import iryaPensando from "../../../assets/irya-pensando.png";
 
 const PILAR_COLORS = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"];
 
@@ -138,6 +138,8 @@ const Resultado: React.FC = () => {
     return resultadoData.detalhesPilares.map((pilar, index) => ({
       name: pilar.nome,
       value: pilar.percentualPilar,
+      pontuacaoObtida: pilar.pontuacaoObtida,
+      pontuacaoMaxima: pilar.pontuacaoMaxima,
       fill: PILAR_COLORS[index % PILAR_COLORS.length],
       fullMark: 100,
       ...getPilarNarrativa(pilar.percentualPilar),
@@ -197,17 +199,19 @@ const Resultado: React.FC = () => {
         <div
           className={`mt-5 rounded-2xl border-l-[6px] bg-gradient-to-br from-white to-[#f4f1e8] p-5 shadow-[0_6px_20px_rgba(0,0,0,0.12)] sm:p-6 ${narrativaGlobal.accentClass}`}
         >
-          <p className="inline-flex rounded-full bg-[#e9ecdf] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#5e6b4f]">
-            {narrativaGlobal.badge}
-          </p>
+          <div>
+            <p className="inline-flex rounded-full bg-[#e9ecdf] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#5e6b4f]">
+              {narrativaGlobal.badge}
+            </p>
 
-          <h2 className="mt-3 text-2xl font-bold text-[#384231] sm:text-3xl">
-            {narrativaGlobal.titulo}
-          </h2>
+            <h2 className="mt-3 text-2xl font-bold text-[#384231] sm:text-3xl">
+              {narrativaGlobal.titulo}
+            </h2>
 
-          <p className="mt-3 text-sm leading-relaxed text-[#59624f] sm:text-base">
-            {narrativaGlobal.mensagem}
-          </p>
+            <p className="mt-3 text-sm leading-relaxed text-[#59624f] sm:text-base">
+              {narrativaGlobal.mensagem}
+            </p>
+          </div>
 
           <div className="mt-4 rounded-xl border border-[#dfe5d2] bg-[#f9faf6] p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-[#6f7b61]">
@@ -237,26 +241,28 @@ const Resultado: React.FC = () => {
               >
                 <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
                 <RadialBar background dataKey="value" />
-                <Legend
-                  iconSize={10}
-                  layout="horizontal"
-                  verticalAlign="bottom"
-                  align="center"
-                  wrapperStyle={{
-                    fontSize: "11px",
-                    lineHeight: "15px",
-                    paddingTop: "10px",
-                  }}
-                />
-                <Tooltip
-                  formatter={(_, __, item) => {
-                    const payload = item?.payload as { nivel?: string } | undefined;
-                    return payload?.nivel || "Sem leitura";
-                  }}
-                  labelFormatter={(label) => `Pilar: ${label}`}
-                />
               </RadialBarChart>
             </ResponsiveContainer>
+          </div>
+
+          <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {chartData.map((item) => (
+              <div
+                key={item.name}
+                className="flex items-center justify-between rounded-lg border border-[#e2e7d7] bg-[#f7f9f2] px-3 py-2 text-sm"
+              >
+                <span className="inline-flex items-center gap-2 text-[#46533e]">
+                  <span
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ backgroundColor: item.fill }}
+                  />
+                  {item.name}
+                </span>
+                <span className="font-semibold text-[#3f4c36]">
+                  {item.pontuacaoObtida}/{item.pontuacaoMaxima}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -288,15 +294,12 @@ const Resultado: React.FC = () => {
 
         {!isSubscriber && (
           <section className="mt-8 rounded-2xl border border-[#d6e0c7] bg-gradient-to-br from-[#f8fced] via-[#f2f8e7] to-[#edf4e0] p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] sm:p-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#6d7a5d]">
-              Próximo nível do seu cuidado
-            </p>
-            <h3 className="mt-2 text-xl font-semibold text-[#34412d] sm:text-2xl">
-              Seu plano de evolução personalizado já está pronto para os próximos 30 dias
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-[#4f5a45] sm:text-base">
-              Ative sua assinatura para desbloquear recomendações práticas por pilar, metas semanais e
-              um roteiro com foco no seu momento atual.
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#6d7a5d]">Prévia do Premium</p>
+            <h4 className="mt-2 text-lg font-semibold text-[#334329] sm:text-xl">
+              EU JÁ BOLEI UM PLANO EXCLUSIVO E PERSONALIZADO PARA VOCÊ.
+            </h4>
+            <p className="mt-1 text-sm font-medium text-[#536248] sm:text-base">
+              Essa prévia mostra o começo da sua virada. Desbloqueie o Premium e receba o plano completo agora.
             </p>
 
             <div className="relative mt-5 overflow-hidden rounded-xl border border-[#dce5cf] bg-white/80 p-4">
@@ -322,16 +325,16 @@ const Resultado: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm font-medium text-[#4d5a44]">Assinatura mensal: R$ 49,00</p>
-              <Button
-                onClick={() => navigate("/assinatura")}
-                variant="primary"
-                label="Desbloquear meu plano personalizado"
-                fullWidth={false}
-                className="sm:min-w-[280px]"
-              />
-            </div>
+            <ChatOffer
+              className="mt-5"
+              label="Desbloqueio do Premium"
+              avatarSrc={iryaPensando}
+              message="Seu resultado já mostrou o próximo passo. No Premium, eu transformo isso em um plano exclusivo e te acompanho diariamente para manter constância."
+              priceLine="R$ 49,00/mês."
+              policyLine="Cancele online a qualquer momento."
+              ctaLabel="Quero continuar com meu plano exclusivo"
+              onClick={() => navigate("/assinatura")}
+            />
           </section>
         )}
       </div>

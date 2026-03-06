@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { FiCheckCircle, FiCreditCard, FiExternalLink } from "react-icons/fi";
+import { FiCheckCircle, FiCreditCard, FiExternalLink, FiLock, FiShield } from "react-icons/fi";
 import Button from "../../components/Button/Button";
+import BackButton from "../../components/BackButton/BackButton";
 import Container from "../../components/Container/Container";
 import api from "../../api";
 import { getPacientePrimeiroNome, setPaciente, getPaciente } from "../../utils/session";
@@ -108,16 +109,27 @@ const Assinatura = () => {
   return (
     <Container>
       <div className="mx-auto w-full max-w-[860px] pb-4">
+        <BackButton />
         <section className="rounded-3xl border border-[#dbe4cf] bg-white/85 p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] backdrop-blur-md sm:p-7">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d7a5d]">
-            Assinatura
+            Checkout protegido
           </p>
           <h1 className="mt-2 text-2xl font-semibold text-[#3c4934] sm:text-3xl">
             {nome ? `${nome}, ative seu plano mensal` : "Ative seu plano mensal"}
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-[#56614b] sm:text-base">
-            Assine para manter seu acompanhamento contínuo no Portal Irya.
+            Você será redirecionada para a plataforma Asaas para concluir o pagamento em ambiente seguro.
           </p>
+          <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <div className="inline-flex items-center gap-2 rounded-xl border border-[#d7e2cb] bg-[#f7fbf2] px-3 py-2 text-sm text-[#516148]">
+              <FiShield className="h-4 w-4" />
+              Plataforma de pagamento verificada
+            </div>
+            <div className="inline-flex items-center gap-2 rounded-xl border border-[#d7e2cb] bg-[#f7fbf2] px-3 py-2 text-sm text-[#516148]">
+              <FiLock className="h-4 w-4" />
+              Processo criptografado e protegido
+            </div>
+          </div>
 
           {loading ? (
             <p className="mt-6 text-sm text-[#5c6951]">Carregando status da assinatura...</p>
@@ -145,7 +157,7 @@ const Assinatura = () => {
                 </p>
                 <p className="mt-2 text-xl font-semibold text-[#384835]">R$ 49,00 / mês</p>
                 <p className="mt-1 text-sm text-[#55634a]">
-                  Cobrança recorrente mensal via Asaas.
+                  Pagamento recorrente no cartão via Asaas.
                 </p>
 
                 <div className="mt-3">
@@ -164,12 +176,15 @@ const Assinatura = () => {
                 <div className="mt-4">
                   <Button
                     variant="primary"
-                    label={status?.isSubscriber ? "Assinatura ativa" : "Assinar agora"}
+                    label={status?.isSubscriber ? "Assinatura ativa" : "Continuar"}
                     onClick={() => void handleCheckout()}
                     disabled={status?.isSubscriber}
                     loading={checkoutLoading}
                   />
                 </div>
+                <p className="mt-3 text-xs text-[#65735c]">
+                  Ao continuar, você será redirecionada para o checkout seguro do Asaas.
+                </p>
               </article>
             </div>
           )}

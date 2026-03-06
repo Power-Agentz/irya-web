@@ -1,5 +1,6 @@
 export const TOKEN_KEY = "token";
 export const PACIENTE_KEY = "pacienteData";
+export const AUTH_CHANGE_EVENT = "irya:auth-changed";
 
 export interface PacienteSession {
   telefone: string;
@@ -16,11 +17,13 @@ export const isAuthenticated = (): boolean => Boolean(getToken());
 
 export const setToken = (token: string): void => {
   localStorage.setItem(TOKEN_KEY, token);
+  window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
 };
 
 export const clearSession = (): void => {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(PACIENTE_KEY);
+  window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
 };
 
 export const getPaciente = (): PacienteSession | null => {
@@ -40,6 +43,7 @@ export const getPaciente = (): PacienteSession | null => {
 
 export const setPaciente = (paciente: PacienteSession): void => {
   localStorage.setItem(PACIENTE_KEY, JSON.stringify(paciente));
+  window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
 };
 
 export const saveSession = (token: string, paciente: PacienteSession): void => {

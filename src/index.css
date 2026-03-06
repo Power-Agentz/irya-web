@@ -31,3 +31,44 @@
     accent-color: #87967a;
   }
 }
+
+@keyframes iryaPulseOuter {
+  0% {
+    transform: scale(0.94);
+    opacity: 0.18;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.52;
+  }
+  100% {
+    transform: scale(0.94);
+    opacity: 0.18;
+  }
+}
+
+@keyframes iryaPulseInner {
+  0% {
+    transform: scale(0.98);
+    opacity: 0.26;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.72;
+  }
+  100% {
+    transform: scale(0.98);
+    opacity: 0.26;
+  }
+}
+
+@layer components {
+  .irya-avatar-ring-outer {
+    animation: iryaPulseOuter 1.8s ease-in-out infinite;
+  }
+
+  .irya-avatar-ring-inner {
+    animation: iryaPulseInner 1.8s ease-in-out infinite;
+    animation-delay: 0.28s;
+  }
+}

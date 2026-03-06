@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import BrandLogo from "../BrandLogo/BrandLogo";
-import iryaAvatar from "../../../assets/irya.webp";
+import iryaAvatar from "../../../assets/irya-de-frente.png";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -29,7 +29,7 @@ const AuthLayout = ({ children, title }: AuthLayoutProps) => {
           <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center">
             <img
               src={iryaAvatar}
-              alt="Avatar da Irya"
+              alt="Irya em posição frontal na área de autenticação"
               className="h-[74vh] max-h-[760px] w-auto object-contain drop-shadow-[0_18px_36px_rgba(28,34,23,0.18)]"
             />
           </div>
@@ -50,12 +50,12 @@ const AuthLayout = ({ children, title }: AuthLayoutProps) => {
             <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center">
               <img
                 src={iryaAvatar}
-                alt="Avatar da Irya"
+                alt="Irya em posição frontal na área de autenticação"
                 className="h-[31vh] min-h-[190px] max-h-[300px] w-auto object-contain drop-shadow-[0_16px_32px_rgba(28,34,23,0.18)]"
               />
             </div>
           </div>
-          <div className="relative z-10 -mt-5 mx-auto flex w-full max-w-[460px] flex-1 flex-col justify-start rounded-t-[30px] bg-[#FDFCF9]/96 px-6 pb-10 pt-6 sm:-mt-6 sm:px-10 sm:pt-7 lg:mt-0 lg:justify-center lg:rounded-none lg:bg-transparent lg:px-12 lg:py-14">
+          <div className="relative z-10 -mt-5 mx-auto flex w-full max-w-[460px] flex-1 flex-col justify-center rounded-t-[30px] bg-[#FDFCF9]/96 px-6 py-8 sm:-mt-6 sm:px-10 sm:py-10 lg:mt-0 lg:rounded-none lg:bg-transparent lg:px-12 lg:py-10">
             <BrandLogo className="mb-2 sm:mb-10" />
 
             {title && (

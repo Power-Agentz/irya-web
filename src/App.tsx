@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import Login from "./pages/Login/Login.tsx";
@@ -10,19 +10,40 @@ import Admin from "./pages/Admin/Admin.tsx";
 import Assinatura from "./pages/Assinatura/Assinatura.tsx";
 
 import Header from "./components/Header/Header.tsx";
-import { isAuthenticated } from "./utils/session";
+import LoggedFooter from "./components/LoggedFooter/LoggedFooter.tsx";
+import { AUTH_CHANGE_EVENT, isAuthenticated } from "./utils/session";
 
-const PrivateRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
-  return isAuthenticated() ? children : <Navigate to="/login" replace />;
+const PrivateRoute: React.FC<{ children: React.ReactElement; authenticated: boolean }> = ({
+  children,
+  authenticated,
+}) => {
+  return authenticated ? children : <Navigate to="/login" replace />;
 };
 
-const PublicRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
-  return isAuthenticated() ? <Navigate to="/inicio" replace /> : children;
+const PublicRoute: React.FC<{ children: React.ReactElement; authenticated: boolean }> = ({
+  children,
+  authenticated,
+}) => {
+  return authenticated ? <Navigate to="/inicio" replace /> : children;
 };
 
 const AppShell: React.FC = () => {
+  const [authenticated, setAuthenticated] = useState(isAuthenticated());
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const showLoggedFooter = authenticated && !isAdminRoute;
+
+  useEffect(() => {
+    const syncAuth = () => setAuthenticated(isAuthenticated());
+
+    window.addEventListener("storage", syncAuth);
+    window.addEventListener(AUTH_CHANGE_EVENT, syncAuth);
+
+    return () => {
+      window.removeEventListener("storage", syncAuth);
+      window.removeEventListener(AUTH_CHANGE_EVENT, syncAuth);
+    };
+  }, []);
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-x-clip">
@@ -36,12 +57,12 @@ const AppShell: React.FC = () => {
 
       {!isAdminRoute && <Header />}
 
-      <div className="flex flex-1 items-stretch py-0 md:py-2">
+      <div className="flex flex-1 items-stretch py-0">
         <Routes>
           <Route
             path="/"
             element={
-              isAuthenticated() ? (
+              authenticated ? (
                 <Navigate to="/inicio" replace />
               ) : (
                 <Navigate to="/cadastro" replace />
@@ -52,7 +73,7 @@ const AppShell: React.FC = () => {
           <Route
             path="/login"
             element={
-              <PublicRoute>
+              <PublicRoute authenticated={authenticated}>
                 <Login />
               </PublicRoute>
             }
@@ -61,7 +82,7 @@ const AppShell: React.FC = () => {
           <Route
             path="/cadastro"
             element={
-              <PublicRoute>
+              <PublicRoute authenticated={authenticated}>
                 <Cadastro />
               </PublicRoute>
             }
@@ -70,7 +91,7 @@ const AppShell: React.FC = () => {
           <Route
             path="/inicio"
             element={
-              <PrivateRoute>
+              <PrivateRoute authenticated={authenticated}>
                 <Home />
               </PrivateRoute>
             }
@@ -79,7 +100,7 @@ const AppShell: React.FC = () => {
           <Route
             path="/questionario"
             element={
-              <PrivateRoute>
+              <PrivateRoute authenticated={authenticated}>
                 <Questionario />
               </PrivateRoute>
             }
@@ -88,7 +109,7 @@ const AppShell: React.FC = () => {
           <Route
             path="/resultado"
             element={
-              <PrivateRoute>
+              <PrivateRoute authenticated={authenticated}>
                 <Resultado />
               </PrivateRoute>
             }
@@ -97,7 +118,7 @@ const AppShell: React.FC = () => {
           <Route
             path="/assinatura"
             element={
-              <PrivateRoute>
+              <PrivateRoute authenticated={authenticated}>
                 <Assinatura />
               </PrivateRoute>
             }
@@ -108,6 +129,8 @@ const AppShell: React.FC = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
+
+      {showLoggedFooter && <LoggedFooter />}
     </div>
   );
 };

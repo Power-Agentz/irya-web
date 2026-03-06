@@ -59,10 +59,6 @@ const Header: React.FC = () => {
     };
   }, [menuOpen]);
 
-  if (!authenticated) {
-    return null;
-  }
-
   const podeResponder = status?.podeResponder === true;
   const possuiResultadoAnterior = Boolean(status?.resultadoAnterior);
   const isHome = location.pathname === "/inicio";
@@ -117,6 +113,10 @@ const Header: React.FC = () => {
     setMenuOpen(false);
     navigate(path);
   };
+
+  if (!authenticated) {
+    return null;
+  }
 
   return (
     <div className="sticky top-0 z-50 w-full border-b border-[#dfe6d4] bg-[#f7faf2]/88 backdrop-blur-xl">

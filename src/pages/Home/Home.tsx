@@ -1,9 +1,13 @@
 import Container from "../../components/Container/Container";
 import Button from "../../components/Button/Button";
+import ChatOffer from "../../components/ChatOffer/ChatOffer";
 import { useNavigate } from "react-router-dom";
 import { useQuestionarioStatus } from "../../hooks/useQuestionarioStatus";
 import Loading from "../../components/Loading/Loading";
 import { getPacientePrimeiroNome, isPacienteSubscriber } from "../../utils/session";
+import iryaReceptiva from "../../../assets/irya-receptiva.png";
+import iryaSaudando from "../../../assets/irya-saudando.png";
+import iryaGratidao from "../../../assets/irya-grata.png";
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
@@ -62,35 +66,46 @@ const Home = () => {
           <section className="relative overflow-hidden rounded-[28px] border border-[#d6e0c7] bg-gradient-to-br from-[#f8fced] via-[#f2f8e7] to-[#edf4e0] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:p-8">
             <div className="pointer-events-none absolute -top-10 right-0 h-40 w-40 rounded-full bg-[#d9c69f]/28 blur-3xl" />
             <div className="pointer-events-none absolute bottom-0 left-0 h-48 w-48 rounded-full bg-[#98ab8a]/24 blur-3xl" />
-
-            <header className="relative z-10 space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d7a5d]">
-                Portal Irya
-              </p>
-              <h1 className="max-w-[20ch] font-['Iowan_Old_Style','Georgia',serif] text-2xl font-medium tracking-tight text-[#34412d] sm:text-4xl">
-                {nome ? `Olá, ${nome}` : "Olá"}, vamos começar seu primeiro ritual?
-              </h1>
-              <p className="max-w-[56ch] text-sm leading-relaxed text-[#4f5a45] sm:text-base">
-                Seu primeiro check-in leva poucos minutos e inaugura o acompanhamento da sua evolução.
-              </p>
-            </header>
-
-            <div className="relative z-10 mt-7 grid grid-cols-1 gap-3 sm:max-w-[430px]">
-              <Button
-                onClick={() => navigate("/questionario")}
-                variant="primary"
-                label="Iniciar questionário MEV"
-              />
-              {!isSubscriber && (
-                <Button
-                  onClick={() => navigate("/assinatura")}
-                  variant="secondary"
-                  label="Conhecer assinatura mensal"
+            <div className="relative z-10 grid grid-cols-1 gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+              <div className="relative mx-auto w-full max-w-[340px] h-[260px] sm:h-[300px] lg:h-[350px]">
+                <img
+                  src={iryaReceptiva}
+                  alt="Irya receptiva dando boas-vindas no início da jornada"
+                  className="pointer-events-none absolute bottom-[-2px] left-1/2 h-[280px] w-auto -translate-x-1/2 object-contain sm:h-[320px] lg:h-[380px]"
                 />
-              )}
-              <p className="text-center text-xs font-medium text-[#6d7762] sm:text-sm">
-                Leva menos de 5 minutos para concluir.
-              </p>
+              </div>
+
+              <div>
+                <header className="space-y-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d7a5d]">
+                    Bem-vindo ao Portal Irya
+                  </p>
+                  <h1 className="max-w-[20ch] font-['Iowan_Old_Style','Georgia',serif] text-2xl font-medium tracking-tight text-[#34412d] sm:text-4xl">
+                    {nome ? `Olá, ${nome}` : "Olá"}, vamos começar seu primeiro ritual?
+                  </h1>
+                  <p className="max-w-[56ch] text-sm leading-relaxed text-[#4f5a45] sm:text-base">
+                    Seu primeiro check-in leva poucos minutos e inaugura o acompanhamento da sua evolução.
+                  </p>
+                </header>
+
+                <div className="mt-7 grid grid-cols-1 gap-3 sm:max-w-[430px]">
+                  <Button
+                    onClick={() => navigate("/questionario")}
+                    variant="primary"
+                    label="Iniciar questionário MEV"
+                  />
+                  {!isSubscriber && (
+                    <Button
+                      onClick={() => navigate("/assinatura")}
+                      variant="secondary"
+                      label="Conhecer assinatura mensal"
+                    />
+                  )}
+                  <p className="text-center text-xs font-medium text-[#6d7762] sm:text-sm">
+                    Leva menos de 5 minutos para concluir.
+                  </p>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -152,18 +167,25 @@ const Home = () => {
       <div className="mx-auto w-full max-w-[760px] pb-4">
         {podeResponder && (
           <section className="mb-5 rounded-2xl border border-[#c7d5b5] bg-gradient-to-r from-[#f6faef] to-[#eef5e2] p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] sm:mb-6 sm:p-7">
-            <header className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d7a5d]">
-                Check-in mensal liberado
-              </p>
-              <h2 className="text-lg font-semibold text-[#34412d] sm:text-xl">
-                Seu questionário já pode ser respondido
-              </h2>
-              <p className="text-sm leading-relaxed text-[#4f5548] sm:text-base">
-                Leva menos de 5 minutos e ajuda a manter sua evolução alinhada
-                com o momento atual.
-              </p>
-            </header>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_180px] lg:items-center">
+              <header className="space-y-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d7a5d]">
+                  Check-in mensal liberado
+                </p>
+                <h2 className="text-lg font-semibold text-[#34412d] sm:text-xl">
+                  Seu questionário já pode ser respondido
+                </h2>
+                <p className="text-sm leading-relaxed text-[#4f5548] sm:text-base">
+                  Leva menos de 5 minutos e ajuda a manter sua evolução alinhada
+                  com o momento atual.
+                </p>
+              </header>
+              <img
+                src={iryaSaudando}
+                alt="Irya saudando com o check-in mensal liberado"
+                className="mx-auto h-[150px] w-[150px] rounded-2xl border border-[#d7e2cb] object-cover object-top shadow-[0_10px_20px_rgba(29,38,25,0.14)]"
+              />
+            </div>
 
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto]">
               <Button
@@ -198,31 +220,16 @@ const Home = () => {
         )}
 
         {!isSubscriber && (
-          <section className="mb-5 rounded-2xl border border-[#d6e0c7] bg-gradient-to-br from-[#f8fced] via-[#f2f8e7] to-[#edf4e0] p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] sm:mb-6 sm:p-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6d7a5d]">
-              Assinatura mensal
-            </p>
-            <h2 className="mt-2 text-lg font-semibold text-[#34412d] sm:text-xl">
-              Assine o Premium. Transforme sua rotina.
-            </h2>
-            <p className="mt-2 text-sm text-[#4f5548] sm:text-base">
-              Acesse seu plano personalizado agora e dê o próximo passo na sua jornada. Tudo o que você
-              precisa em um só lugar.
-            </p>
-            <p className="mt-2 text-sm font-semibold text-[#3f4c36] sm:text-base">
-              R$ 49,00/mês.
-            </p>
-            <p className="mt-1 text-sm text-[#4f5548] sm:text-base">
-              Cancele online a qualquer momento.
-            </p>
-            <div className="mt-4 sm:max-w-[260px]">
-              <Button
-                onClick={() => navigate("/assinatura")}
-                variant="primary"
-                label="Ir para pagamento"
-              />
-            </div>
-          </section>
+          <ChatOffer
+            className="mb-5 sm:mb-6"
+            label="Premium Irya"
+            avatarSrc={iryaGratidao}
+            message="Seu MEV já abriu o caminho. No Premium, eu continuo com você no dia a dia com um plano exclusivo, metas claras e ajustes rápidos conforme sua evolução."
+            priceLine="R$ 49,00/mês."
+            policyLine="Cancele online a qualquer momento."
+            ctaLabel="Liberar meu plano exclusivo"
+            onClick={() => navigate("/assinatura")}
+          />
         )}
 
         <section className="rounded-2xl border border-white/70 bg-white/70 p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] backdrop-blur-md sm:p-7">
