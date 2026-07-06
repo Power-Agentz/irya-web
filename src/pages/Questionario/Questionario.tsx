@@ -325,7 +325,7 @@ const Questionario: React.FC = () => {
   if (error && !isWeightStep && !currentQuestion) {
     return (
       <Container>
-        <p className="mx-auto w-full max-w-[760px] rounded-lg border border-[#f5c2c2] bg-[#ffebee] p-4 text-sm text-[#b00020]">
+        <p className="mx-auto w-full max-w-[760px] rounded-lg border border-[#f5c2c2] bg-[#ffebee] p-4 text-sm text-[#c0392b]">
           {error}
         </p>
       </Container>
@@ -349,33 +349,33 @@ const Questionario: React.FC = () => {
       <div className="mx-auto w-full max-w-[860px]">
         <BackButton />
 
-        <h1 className="text-2xl font-semibold text-[#3f4c36] sm:text-3xl">
+        <h1 className="irya-heading text-2xl sm:text-3xl">
           Avaliação de Estilo de Vida
         </h1>
 
-        <div className="mt-4 h-2.5 w-full rounded-full bg-[#e3e6de]">
+        <div className="mt-4 h-2.5 w-full rounded-full bg-[#f1e3b9]/70">
           <div
-            className="h-full rounded-full bg-[#87967a] transition-[width] duration-200"
+            className="h-full rounded-full bg-[#4a5d4f] transition-[width] duration-200"
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
 
-        <section className="mt-4 rounded-2xl border border-[#d7e2c9] bg-gradient-to-r from-[#f6faef] to-[#edf5e2] p-2.5 shadow-[0_8px_20px_rgba(42,54,34,0.08)] sm:p-3">
+        <section className="mt-4 rounded-[32px] border border-[#f1e3b9] bg-[linear-gradient(135deg,rgba(255,255,255,0.94)_0%,rgba(244,238,216,0.72)_100%)] p-3 shadow-[0_8px_24px_rgba(74,93,79,0.12)] sm:p-4">
           <div className="flex items-start gap-3">
             <div className="relative shrink-0">
-              <span className="irya-avatar-ring-outer pointer-events-none absolute inset-[-10px] rounded-full border border-[#79b56f]/55" />
-              <span className="irya-avatar-ring-inner pointer-events-none absolute inset-[-5px] rounded-full border-2 border-[#79b56f]/70" />
+              <span className="irya-avatar-ring-outer pointer-events-none absolute inset-[-10px] rounded-full border border-[#7c9d72]/45" />
+              <span className="irya-avatar-ring-inner pointer-events-none absolute inset-[-5px] rounded-full border-2 border-[#7c9d72]/55" />
               <img
                 src={iryaDialogue.avatarSrc}
                 alt={iryaDialogue.avatarAlt}
-                className="relative h-16 w-16 rounded-full border-2 border-[#bfd0ae] object-cover object-[50%_22%] shadow-[0_10px_20px_rgba(70,93,57,0.2)] sm:h-24 sm:w-24"
+                className="relative h-[4.5rem] w-[4.5rem] rounded-full border-2 border-[#e4c884] object-cover object-[50%_22%] shadow-[0_10px_20px_rgba(74,93,79,0.18)] sm:h-[6.5rem] sm:w-[6.5rem]"
               />
             </div>
 
             <div className="relative flex-1">
-              <div className="absolute -left-2 top-6 h-4 w-4 rotate-45 border-b border-l border-[#dbe5ce] bg-white/90" />
-              <div className="rounded-xl border border-[#dbe5ce] bg-white/90 p-2.5 text-sm text-[#4f5a45] shadow-[0_8px_16px_rgba(42,54,34,0.08)] sm:p-3 sm:text-[15px]">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6d7a5d]">
+              <div className="absolute -left-2 top-6 h-4 w-4 rotate-45 border-b border-l border-[#f1e3b9] bg-white/92" />
+              <div className="rounded-[24px] border border-[#f1e3b9] bg-white/92 p-3 text-sm text-[#4a5d4f] shadow-[0_4px_16px_rgba(74,93,79,0.12)] sm:p-4 sm:text-[15px]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#7c9d72]">
                   Irya
                 </p>
                 <p className="mt-1 leading-relaxed">{iryaDialogue.message}</p>
@@ -386,21 +386,21 @@ const Questionario: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="mt-5 sm:mt-6">
           {isWeightStep ? (
-            <section className="min-h-[430px] rounded-xl border border-[#e8ebdf] bg-white/82 p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)] sm:min-h-[420px] sm:p-6">
-              <h2 className="text-lg font-semibold text-[#5f6f52] sm:text-xl">
+            <section className="min-h-[430px] rounded-[32px] border border-[#f1e3b9] bg-white/88 p-4 shadow-[0_4px_16px_rgba(74,93,79,0.12)] backdrop-blur-md sm:min-h-[420px] sm:p-6">
+              <h2 className="irya-heading text-lg sm:text-xl">
                 Seus dados físicos atuais
               </h2>
 
-              <p className="mt-3 text-[15px] leading-relaxed text-[#3f3f3f] sm:text-base">
+              <p className="mt-3 text-[15px] leading-relaxed text-[#4a5d4f] sm:text-base">
                 Informe seu peso de hoje e sua altura para calcularmos seu IMC e acompanharmos sua evolução mensal.
               </p>
 
               <div className="mt-5 grid grid-cols-1 gap-4 sm:max-w-[520px] sm:grid-cols-2">
                 <div>
-                  <label htmlFor="peso-atual" className="text-sm font-medium text-[#4f5a45]">
+                  <label htmlFor="peso-atual" className="text-sm font-medium text-[#4a5d4f]">
                     Peso em kg
                   </label>
-                  <div className="mt-2 flex items-center gap-2 rounded-lg border border-[#d9dfcd] bg-[#f9fbf5] px-3">
+                  <div className="mt-2 flex items-center gap-2 rounded-[8px] border border-[#f1e3b9] bg-[#fefefe] px-3">
                     <input
                       id="peso-atual"
                       type="text"
@@ -413,19 +413,19 @@ const Questionario: React.FC = () => {
                       }}
                       className="h-11 w-full bg-transparent text-base outline-none"
                     />
-                    <span className="text-sm font-semibold text-[#5f6f52]">kg</span>
+                    <span className="text-sm font-semibold text-[#4a5d4f]">kg</span>
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="altura-atual" className="text-sm font-medium text-[#4f5a45]">
+                  <label htmlFor="altura-atual" className="text-sm font-medium text-[#4a5d4f]">
                     Altura em m
                   </label>
                   <div
                     className={`mt-2 flex items-center gap-2 rounded-lg border px-3 ${
                       alturaBloqueada
-                        ? "border-[#d5dbc9] bg-[#eef3e7]"
-                        : "border-[#d9dfcd] bg-[#f9fbf5]"
+                        ? "border-[#eadfbf] bg-[#f8f3e5]"
+                        : "border-[#f1e3b9] bg-[#fefefe]"
                     }`}
                   >
                     <input
@@ -440,12 +440,12 @@ const Questionario: React.FC = () => {
                         setError(null);
                         setAlturaInput(formatAlturaInput(e.target.value));
                       }}
-                      className="h-11 w-full bg-transparent text-base outline-none disabled:cursor-not-allowed disabled:text-[#5f6f52]"
+                      className="h-11 w-full bg-transparent text-base outline-none disabled:cursor-not-allowed disabled:text-[#7c9d72]"
                     />
-                    <span className="text-sm font-semibold text-[#5f6f52]">m</span>
+                    <span className="text-sm font-semibold text-[#4a5d4f]">m</span>
                   </div>
                   {alturaBloqueada && (
-                    <p className="mt-1 text-xs text-[#6b7762]">
+                    <p className="mt-1 text-xs text-[#7c9d72]">
                       Altura registrada no primeiro acesso e bloqueada para edição.
                     </p>
                   )}
@@ -454,12 +454,12 @@ const Questionario: React.FC = () => {
             </section>
           ) : (
             currentQuestion && (
-              <section className="min-h-[430px] rounded-xl border border-[#e8ebdf] bg-white/82 p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)] sm:min-h-[420px] sm:p-6">
-                <h2 className="text-lg font-semibold text-[#5f6f52] sm:text-xl">
+              <section className="min-h-[430px] rounded-[32px] border border-[#f1e3b9] bg-white/88 p-4 shadow-[0_4px_16px_rgba(74,93,79,0.12)] backdrop-blur-md sm:min-h-[420px] sm:p-6">
+                <h2 className="irya-heading text-lg sm:text-xl">
                   {currentQuestion.pilarNome}
                 </h2>
 
-                <p className="mt-3 text-[15px] font-medium leading-relaxed text-[#3f3f3f] sm:text-base">
+                <p className="mt-3 text-[15px] font-medium leading-relaxed text-[#4a5d4f] sm:text-base">
                   {currentQuestion.textoPergunta}
                 </p>
 
@@ -472,8 +472,8 @@ const Questionario: React.FC = () => {
                         key={score}
                         className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition sm:text-base ${
                           isSelected
-                            ? "border-[#87967a] bg-[#eef2e8]"
-                            : "border-[#e3e6de] bg-white hover:border-[#87967a]/50"
+                            ? "border-[#4a5d4f] bg-[#fbf7ee]"
+                            : "border-[#f1e3b9] bg-white hover:border-[#7c9d72]/50"
                         }`}
                       >
                         <input
@@ -499,7 +499,7 @@ const Questionario: React.FC = () => {
           )}
 
           {error && (
-            <p className="mt-4 rounded-lg border border-[#f5c2c2] bg-[#ffebee] p-3 text-sm text-[#b00020]">
+            <p className="mt-4 rounded-lg border border-[#f5c2c2] bg-[#ffebee] p-3 text-sm text-[#c0392b]">
               {error}
             </p>
           )}

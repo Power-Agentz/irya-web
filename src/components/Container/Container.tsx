@@ -7,15 +7,15 @@ interface ContainerProps {
 
 const Container = ({ children, hasHeader = true }: ContainerProps) => {
   return (
-    <main className="w-full bg-[radial-gradient(1200px_520px_at_8%_-8%,rgba(156,178,138,0.14),transparent_62%),radial-gradient(900px_460px_at_92%_15%,rgba(214,190,147,0.12),transparent_65%),linear-gradient(180deg,#f9faf6_0%,#f6f8f2_46%,#f4f6ef_100%)]">
+    <main className="w-full bg-[radial-gradient(980px_520px_at_12%_-8%,rgba(234,207,147,0.2),transparent_60%),radial-gradient(760px_420px_at_90%_10%,rgba(124,157,114,0.1),transparent_60%),linear-gradient(180deg,#fffefb_0%,#fbf8f0_46%,#f8f3e8_100%)]">
       <div
-        className={`relative flex w-full flex-col overflow-visible from-[#fdfcf9] via-[#fbfaf6] to-[#f7f3ea] ${
+        className={`relative flex w-full flex-col overflow-visible ${
           hasHeader ? "min-h-[calc(100dvh-88px)]" : "min-h-dvh"
-        } px-5 py-6 sm:px-8 md:min-h-0 md:px-10 md:py-12 lg:px-12`}
+        } px-5 py-6 sm:px-8 md:min-h-0 md:px-10 md:py-10 lg:px-12`}
       >
-        <div className="pointer-events-none absolute inset-0 -z-10 opacity-70">
-          <div className="absolute -top-12 right-[8%] h-52 w-52 rounded-full bg-[#d9c8a6]/18 blur-3xl" />
-          <div className="absolute bottom-0 left-[3%] h-60 w-60 rounded-full bg-[#95a788]/16 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 -z-10 opacity-80">
+          <div className="absolute -top-14 right-[8%] h-56 w-56 rounded-full bg-[#eacf93]/16 blur-3xl" />
+          <div className="absolute bottom-[10%] left-[4%] h-64 w-64 rounded-full bg-[#7c9d72]/10 blur-3xl" />
         </div>
         {children}
       </div>

@@ -52,7 +52,7 @@ const Login = () => {
         className="mt-8 sm:mt-9"
       >
         {error && (
-          <p className="mb-5 rounded-2xl border border-[#f2c7c7] bg-[#fff1f1]/90 p-3 text-center text-sm font-medium text-[#b00020] backdrop-blur-sm">
+          <p className="mb-5 rounded-2xl border border-[#f2c7c7] bg-[#fff1f1]/90 p-3 text-center text-sm font-medium text-[#c0392b] backdrop-blur-sm">
             {error}
           </p>
         )}
@@ -85,11 +85,11 @@ const Login = () => {
             className="mt-2"
           />
 
-          <p className="pt-1 text-center text-sm text-[#66705d]">
+          <p className="pt-1 text-center text-sm text-[#7c9d72]">
             ou
             <Link
               to="/cadastro"
-              className="ml-1 font-semibold text-[#7d8e70] transition hover:text-[#6b7d5f] hover:underline"
+              className="ml-1 font-semibold text-[#4a5d4f] transition hover:text-[#3a4d3f] hover:underline"
             >
               crie sua conta
             </Link>
@@ -98,7 +98,7 @@ const Login = () => {
           <div className="pt-1 text-center">
             <Link
               to="/admin"
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#d6dfcc] bg-[#f7faf2] px-3 py-1 text-xs font-medium text-[#607053] transition hover:border-[#b8c6aa] hover:bg-[#eef4e5] hover:text-[#4f5f43]"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#f1e3b9] bg-[#fffaf1] px-3 py-1 text-xs font-medium text-[#4a5d4f] transition hover:border-[#e4c884] hover:bg-white hover:text-[#3a4d3f]"
             >
               <FiLock className="h-3.5 w-3.5" />
               Acesso interno da equipe

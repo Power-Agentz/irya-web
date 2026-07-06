@@ -248,7 +248,7 @@ export default function Cadastro() {
       }
 
       if (phoneStatus === "available" && isValidPhone(formData.phone)) {
-        return <p className="text-sm text-[#4f7b4f]">Telefone disponível.</p>;
+        return <p className="text-sm text-[#4a5d4f]">Telefone disponível.</p>;
       }
 
       if (phoneStatus === "taken") {
@@ -295,7 +295,7 @@ export default function Cadastro() {
         formData.confirmPassword.length > 0
       ) {
         return (
-          <p className="text-sm text-[#4f7b4f]">
+          <p className="text-sm text-[#4a5d4f]">
             Senha confirmada com sucesso.
           </p>
         );
@@ -311,7 +311,7 @@ export default function Cadastro() {
         return (
           <div className="flex min-h-[180px] flex-col justify-center">
             <div className="space-y-3 text-[15px] font-light sm:text-base">
-              <h1 className="flex items-center gap-0.5 font-['Iowan_Old_Style','Georgia',serif] text-[1.5rem] font-medium tracking-tight text-[#3f4c36] sm:text-[2rem]">
+              <h1 className="flex items-center gap-0.5 font-['Libre_Baskerville',serif] text-[1.5rem] font-normal tracking-tight text-[#4a5d4f] sm:text-[2rem]">
                 Bem-vinda à Minha Irya <span className="ml-0.5 text-xs">©</span>
               </h1>
               <p>
@@ -322,7 +322,7 @@ export default function Cadastro() {
                 Já possui conta?{" "}
                 <Link
                   to="/login"
-                  className="font-semibold text-[#87967a] hover:underline"
+                  className="font-semibold text-[#4a5d4f] hover:text-[#3a4d3f] hover:underline"
                 >
                   Entrar
                 </Link>
@@ -405,7 +405,7 @@ export default function Cadastro() {
       case "confirm":
         return (
           <div className="space-y-3">
-            <h3 className="text-xl font-semibold text-[#3f4c36]">Prontinho!</h3>
+            <h3 className="font-['Libre_Baskerville',serif] text-xl font-normal text-[#4a5d4f]">Prontinho!</h3>
             <p className="text-[15px] font-light sm:text-base">
               Agora você terá acesso à Minha Irya<span className="ml-0.5 text-xs">©</span>, aqui você vai acompanhar o
               seu progresso e entender como estamos juntas atingindo os seus
@@ -427,9 +427,9 @@ export default function Cadastro() {
         transition={{ duration: 0.45, ease: "easeOut" }}
         className="mt-2 sm:mt-4"
       >
-        <div className="mb-7 h-1.5 w-full overflow-hidden rounded-full bg-[#d9ddcf]/75">
+        <div className="mb-7 h-1.5 w-full overflow-hidden rounded-full bg-[#f1e3b9]/70">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-[#9eae8e] via-[#7f9272] to-[#9fae8f] shadow-[0_0_14px_rgba(129,148,113,0.35)] transition-[width] duration-300"
+            className="h-full rounded-full bg-[#4a5d4f] shadow-[0_0_14px_rgba(74,93,79,0.28)] transition-[width] duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -450,13 +450,13 @@ export default function Cadastro() {
         <div className="mt-4 min-h-5">{renderStepFeedback()}</div>
 
         {stepError && (
-          <p className="mt-4 rounded-2xl border border-[#f2c7c7] bg-[#fff1f1]/90 p-3 text-sm text-[#b00020] backdrop-blur-sm">
+          <p className="mt-4 rounded-2xl border border-[#f2c7c7] bg-[#fff1f1]/90 p-3 text-sm text-[#c0392b] backdrop-blur-sm">
             {stepError}
           </p>
         )}
 
         {error && (
-          <p className="mt-4 rounded-2xl border border-[#f2c7c7] bg-[#fff1f1]/90 p-3 text-sm text-[#b00020] backdrop-blur-sm">
+          <p className="mt-4 rounded-2xl border border-[#f2c7c7] bg-[#fff1f1]/90 p-3 text-sm text-[#c0392b] backdrop-blur-sm">
             {error}
           </p>
         )}
@@ -503,7 +503,7 @@ export default function Cadastro() {
       </motion.div>
       {showPhoneConfirm && (
         <div className="fixed inset-0 z-[999] flex items-end justify-center bg-[#1d2119]/35 p-3 backdrop-blur-sm sm:items-center sm:p-6">
-          <div className="w-full max-w-[380px] rounded-[26px] border border-[#e6dfd0] bg-[#fffdfa]/95 p-5 text-center shadow-[0_20px_40px_rgba(21,24,19,0.16)] sm:p-6">
+          <div className="w-full max-w-[380px] rounded-[26px] border border-[#f1e3b9] bg-[#fffefb]/95 p-5 text-center shadow-[0_20px_40px_rgba(74,93,79,0.16)] sm:p-6">
             <p className="text-sm sm:text-base">
               Você digitou o número: <b>{formData.phone}</b>.
               <br />

@@ -233,58 +233,58 @@ const Resultado: React.FC = () => {
       <div className="mx-auto w-full max-w-[980px]">
         <BackButton />
 
-        <h1 className="text-2xl font-semibold text-[#3f4c36] sm:text-3xl">
+        <h1 className="irya-heading text-2xl sm:text-3xl">
           Prontinho! Confira o seu resultado abaixo.
         </h1>
-        <p className="mt-1 text-sm text-[#5f6657] sm:text-base">
+        <p className="mt-1 text-sm text-[#7c9d72] sm:text-base">
           Última atualização: {formatDate(dataConclusao)}
         </p>
 
         <div
-          className={`mt-5 rounded-2xl border-l-[6px] bg-gradient-to-br from-white to-[#f4f1e8] p-5 shadow-[0_6px_20px_rgba(0,0,0,0.12)] sm:p-6 ${narrativaGlobal.accentClass}`}
+          className={`mt-5 rounded-[32px] border border-[#f1e3b9] border-l-[6px] bg-[linear-gradient(135deg,rgba(255,255,255,0.96)_0%,rgba(244,238,216,0.82)_100%)] p-5 shadow-[0_8px_24px_rgba(74,93,79,0.14)] sm:p-6 ${narrativaGlobal.accentClass}`}
         >
           <div>
-            <p className="inline-flex rounded-full bg-[#e9ecdf] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#5e6b4f]">
+            <p className="inline-flex rounded-full bg-[#fffaf1] px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#7c9d72]">
               {narrativaGlobal.badge}
             </p>
 
-            <h2 className="mt-3 text-2xl font-bold text-[#384231] sm:text-3xl">
+            <h2 className="mt-3 font-['Libre_Baskerville',serif] text-2xl font-bold text-[#4a5d4f] sm:text-3xl">
               {narrativaGlobal.titulo}
             </h2>
 
-            <p className="mt-3 text-sm leading-relaxed text-[#59624f] sm:text-base">
+            <p className="mt-3 text-sm leading-relaxed text-[#4a5d4f] sm:text-base">
               {narrativaGlobal.mensagem}
             </p>
           </div>
 
-          <div className="mt-4 rounded-xl border border-[#dfe5d2] bg-[#f9faf6] p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#6f7b61]">
+          <div className="mt-4 rounded-2xl border border-[#f1e3b9] bg-[#fffaf1] p-4">
+            <p className="irya-section-label text-[0.75rem]">
               Próximo passo sugerido
             </p>
-            <p className="mt-1 text-sm text-[#4f5945] sm:text-base">{narrativaGlobal.proximoPasso}</p>
+            <p className="mt-1 text-sm text-[#4a5d4f] sm:text-base">{narrativaGlobal.proximoPasso}</p>
           </div>
 
-          <p className="mt-4 text-xs text-[#707a66] sm:text-sm">
+          <p className="mt-4 text-xs text-[#7c9d72] sm:text-sm">
             Classificação técnica atual: <b>{classificacao}</b>
           </p>
 
           <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <div className="rounded-xl border border-[#dce4cf] bg-[#f7faf2] p-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#6d7a5d]">
+            <div className="rounded-2xl border border-[#f1e3b9] bg-[#fffaf1] p-3">
+              <p className="irya-section-label text-[0.75rem]">
                 Altura considerada
               </p>
-              <p className="mt-1 text-sm font-semibold text-[#42503a] sm:text-base">
+              <p className="mt-1 text-sm font-semibold text-[#4a5d4f] sm:text-base">
                 {formatAltura(alturaM)}
               </p>
             </div>
-            <div className="rounded-xl border border-[#dce4cf] bg-[#f7faf2] p-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#6d7a5d]">
+            <div className="rounded-2xl border border-[#f1e3b9] bg-[#fffaf1] p-3">
+              <p className="irya-section-label text-[0.75rem]">
                 IMC atual
               </p>
-              <p className="mt-1 text-sm font-semibold text-[#42503a] sm:text-base">
+              <p className="mt-1 text-sm font-semibold text-[#4a5d4f] sm:text-base">
                 {formatImc(imcAtual)}
                 {imcAtual !== null && (
-                  <span className="ml-1 font-medium text-[#5b684f]">
+                    <span className="ml-1 font-medium text-[#7c9d72]">
                     ({getImcClassificacao(imcAtual)})
                   </span>
                 )}
@@ -293,20 +293,20 @@ const Resultado: React.FC = () => {
           </div>
         </div>
 
-        <h3 className="mt-7 border-b-2 border-b-[#87967a] pb-2 text-lg font-semibold text-[#5f6f52] sm:mt-8 sm:text-xl">
+        <h3 className="mt-7 border-b border-b-[#cea952] pb-2 font-['Libre_Baskerville',serif] text-lg font-normal text-[#4a5d4f] sm:mt-8 sm:text-xl">
           Leitura por Pilar
         </h3>
 
-        <div className="mt-3 rounded-xl border border-white/70 bg-white/72 p-2 shadow-[0_14px_34px_rgba(24,28,20,0.12)] backdrop-blur-md sm:p-4">
-          <div className="mb-3 flex items-center justify-between rounded-xl border border-[#dce4cf] bg-[#f7faf2] px-3 py-2.5 sm:px-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#6c785f] sm:text-sm">
+        <div className="mt-3 rounded-[32px] border border-[#f1e3b9] bg-white/88 p-3 shadow-[0_8px_24px_rgba(74,93,79,0.14)] backdrop-blur-md sm:p-4">
+          <div className="mb-3 flex items-center justify-between rounded-2xl border border-[#f1e3b9] bg-[#fffaf1] px-3 py-2.5 sm:px-4">
+            <p className="irya-section-label text-[0.75rem] sm:text-sm">
               Nota final (média dos pilares)
             </p>
             <div className="text-right">
-              <p className="text-sm font-bold text-[#3f4c36] sm:text-base">
+              <p className="text-sm font-bold text-[#4a5d4f] sm:text-base">
                 {formatPercentual(mediaPilaresPercentual)}
               </p>
-              <p className="text-xs font-medium text-[#5f6f52] sm:text-sm">
+              <p className="text-xs font-medium text-[#7c9d72] sm:text-sm">
                 {formatNotaDez(mediaPilaresNotaDez)} / 10
               </p>
             </div>
@@ -331,16 +331,16 @@ const Resultado: React.FC = () => {
             {chartData.map((item) => (
               <div
                 key={item.name}
-                className="flex items-center justify-between rounded-lg border border-[#e2e7d7] bg-[#f7f9f2] px-3 py-2 text-sm"
+                className="flex items-center justify-between rounded-2xl border border-[#f1e3b9] bg-[#fffaf1] px-3 py-2 text-sm"
               >
-                <span className="inline-flex items-center gap-2 text-[#46533e]">
+                <span className="inline-flex items-center gap-2 text-[#4a5d4f]">
                   <span
                     className="h-2.5 w-2.5 rounded-full"
                     style={{ backgroundColor: item.fill }}
                   />
                   {item.name}
                 </span>
-                <span className="font-semibold text-[#3f4c36]">
+                <span className="font-semibold text-[#4a5d4f]">
                   {item.pontuacaoObtida}/{item.pontuacaoMaxima}
                 </span>
               </div>
@@ -348,7 +348,7 @@ const Resultado: React.FC = () => {
           </div>
         </div>
 
-        <h3 className="mt-7 border-b-2 border-b-[#87967a] pb-2 text-lg font-semibold text-[#5f6f52] sm:mt-8 sm:text-xl">
+        <h3 className="mt-7 border-b border-b-[#cea952] pb-2 font-['Libre_Baskerville',serif] text-lg font-normal text-[#4a5d4f] sm:mt-8 sm:text-xl">
           Insights por Pilar
         </h3>
 
@@ -358,15 +358,15 @@ const Resultado: React.FC = () => {
             return (
               <article
                 key={pilar.nome}
-                className="rounded-xl border border-[#e2e6dc] bg-white/82 p-4 shadow-[0_1px_8px_rgba(0,0,0,0.06)]"
+                className="rounded-[28px] border border-[#f1e3b9] bg-white/88 p-4 shadow-[0_4px_16px_rgba(74,93,79,0.1)]"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h4 className="text-base font-semibold text-[#3f4c36]">{pilar.nome}</h4>
-                  <span className="rounded-full bg-[#edf1e5] px-2.5 py-1 text-xs font-semibold text-[#5d6b4d]">
+                  <h4 className="text-base font-semibold text-[#4a5d4f]">{pilar.nome}</h4>
+                  <span className="rounded-full bg-[#fffaf1] px-2.5 py-1 text-xs font-semibold text-[#7c9d72]">
                     {narrativa.nivel}
                   </span>
                 </div>
-                <p className="mt-2 text-sm leading-relaxed text-[#55604a] sm:text-base">
+                <p className="mt-2 text-sm leading-relaxed text-[#4a5d4f] sm:text-base">
                   {narrativa.mensagem}
                 </p>
               </article>
@@ -375,21 +375,21 @@ const Resultado: React.FC = () => {
         </div>
 
         {!isSubscriber && (
-          <section className="mt-8 rounded-2xl border border-[#dce5cf] bg-white/86 p-5 shadow-[0_14px_34px_rgba(24,28,20,0.1)] sm:p-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6d7a5d]">
+          <section className="mt-8 rounded-[32px] border border-[#f1e3b9] bg-white/88 p-5 shadow-[0_8px_24px_rgba(74,93,79,0.14)] sm:p-6">
+            <p className="irya-section-label">
               Seu potencial de evolução
             </p>
-            <h4 className="mt-2 text-xl font-semibold text-[#334329] sm:text-2xl">
+            <h4 className="mt-2 font-['Libre_Baskerville',serif] text-xl font-normal text-[#4a5d4f] sm:text-2xl">
               Você tem espaço real para avançar com consistência.
             </h4>
-            <p className="mt-3 text-sm leading-relaxed text-[#4f5a45] sm:text-base">
+            <p className="mt-3 text-sm leading-relaxed text-[#4a5d4f] sm:text-base">
               Hoje seu índice geral de consistência é <b>{percentualGlobalResumo}%</b>.
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-[#4f5a45] sm:text-base">
+            <p className="mt-2 text-sm leading-relaxed text-[#4a5d4f] sm:text-base">
               Com ajustes simples de rotina e acompanhamento diário, mulheres no mesmo cenário
               costumam atingir <b>70% a 80%</b> em poucos meses.
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-[#4f5a45] sm:text-base">
+            <p className="mt-2 text-sm leading-relaxed text-[#4a5d4f] sm:text-base">
               O plano Premium da IRYA foi criado exatamente para ajudar você a fazer essa evolução
               acontecer.
             </p>
@@ -397,21 +397,21 @@ const Resultado: React.FC = () => {
         )}
 
         {!isSubscriber && (
-          <section className="mt-8 rounded-2xl border border-[#d6e0c7] bg-gradient-to-br from-[#f8fced] via-[#f2f8e7] to-[#edf4e0] p-5 shadow-[0_14px_34px_rgba(24,28,20,0.12)] sm:p-6">
-            <h4 className="text-xl font-semibold text-[#334329] sm:text-2xl">
+          <section className="mt-8 rounded-[32px] border border-[#f1e3b9] bg-[linear-gradient(135deg,rgba(255,255,255,0.94)_0%,rgba(244,238,216,0.74)_100%)] p-5 shadow-[0_8px_32px_rgba(74,93,79,0.16)] sm:p-6">
+            <h4 className="font-['Libre_Baskerville',serif] text-xl font-normal text-[#4a5d4f] sm:text-2xl">
               Seu plano personalizado já está pronto
             </h4>
 
-            <div className="mt-4 rounded-2xl border border-[#dce5cf] bg-white/86 p-4 shadow-[0_8px_20px_rgba(24,28,20,0.08)] sm:p-5">
+            <div className="mt-4 rounded-[28px] border border-[#f1e3b9] bg-white/90 p-4 shadow-[0_4px_16px_rgba(74,93,79,0.12)] sm:p-5">
               <div className="flex items-start gap-3 sm:gap-4">
                 <img
                   src={iryaSaudando}
                   alt="Irya apresentando o plano personalizado"
-                  className="h-16 w-16 shrink-0 rounded-full border-2 border-[#bfd0ae] object-cover object-[50%_24%] shadow-[0_10px_20px_rgba(70,93,57,0.18)] sm:h-20 sm:w-20"
+                  className="h-16 w-16 shrink-0 rounded-full border-2 border-[#e4c884] object-cover object-[50%_24%] shadow-[0_10px_20px_rgba(74,93,79,0.18)] sm:h-20 sm:w-20"
                 />
-                <div className="relative flex-1 rounded-xl border border-[#dfe7d3] bg-[#fbfdf7] p-3 text-sm leading-relaxed text-[#4f5a45] sm:text-base">
-                  <div className="absolute -left-2 top-5 h-4 w-4 rotate-45 border-b border-l border-[#dfe7d3] bg-[#fbfdf7]" />
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#6e7f61]">Irya</p>
+                <div className="relative flex-1 rounded-[24px] border border-[#f1e3b9] bg-[#fffefb] p-3 text-sm leading-relaxed text-[#4a5d4f] sm:text-base">
+                  <div className="absolute -left-2 top-5 h-4 w-4 rotate-45 border-b border-l border-[#f1e3b9] bg-[#fffefb]" />
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7c9d72]">Irya</p>
                   <p className="mt-1">
                     Eu analisei seu resultado e organizei um plano simples para melhorar seus
                     pilares de saúde.
@@ -420,11 +420,11 @@ const Resultado: React.FC = () => {
               </div>
             </div>
 
-            <p className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-[#6d7a5d]">
+            <p className="mt-5 irya-section-label">
               Plano criado a partir do seu resultado
             </p>
 
-            <div className="relative mt-3 overflow-hidden rounded-xl border border-[#dce5cf] bg-white/84 p-4">
+            <div className="relative mt-3 overflow-hidden rounded-[28px] border border-[#f1e3b9] bg-white/88 p-4">
               <div className="pointer-events-none absolute inset-0 z-20 bg-white/25 backdrop-blur-[4px]" />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-16 bg-gradient-to-t from-[#edf4e0] to-transparent" />
 
@@ -447,7 +447,7 @@ const Resultado: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => navigate("/assinatura")}
-                  className="inline-flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border border-[#cddbbc] bg-[#f3f8ea]/95 text-[#5f7450] shadow-[0_10px_20px_rgba(36,49,30,0.18)] transition hover:scale-[1.04] hover:bg-[#eef5e2]"
+                className="inline-flex h-16 w-16 items-center justify-center rounded-full border border-[#e4c884] bg-[#fffaf1]/95 text-[#4a5d4f] shadow-[0_10px_20px_rgba(74,93,79,0.18)] transition hover:scale-[1.04] hover:bg-white"
                   aria-label="Desbloquear plano personalizado"
                 >
                   <FiLock className="h-7 w-7" />
@@ -456,8 +456,8 @@ const Resultado: React.FC = () => {
             </div>
 
             <div className="mt-5">
-              <p className="text-2xl font-semibold text-[#334329]">R$49/mês</p>
-              <p className="mt-1 text-sm text-[#4f5a45] sm:text-base">
+              <p className="text-2xl font-semibold text-[#4a5d4f]">R$49/mês</p>
+              <p className="mt-1 text-sm text-[#4a5d4f] sm:text-base">
                 Cancele com facilidade quando quiser.
               </p>
             </div>

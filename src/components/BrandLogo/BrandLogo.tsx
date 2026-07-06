@@ -12,7 +12,7 @@ const BrandLogo = ({ className = "" }: BrandLogoProps) => {
         alt="Logo da Minha Irya"
         width={7656}
         height={3616}
-        className="h-[96px] w-auto sm:h-[112px]"
+        className="h-[84px] w-auto sm:h-[96px]"
       />
     </div>
   );

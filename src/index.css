@@ -1,7 +1,47 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --font-headline: "Montserrat", sans-serif;
+  --font-sans: "Inter", sans-serif;
+  --font-serif: "Libre Baskerville", serif;
+  --color-brand-green: #4a5d4f;
+  --color-brand-green-deep: #3a4d3f;
+  --color-brand-cream-light: #f4eed8;
+  --color-brand-cream-medium: #eacf93;
+  --color-brand-cream-dark: #f1e3b9;
+  --color-brand-gold: #cea952;
+  --color-brand-gold-light: #e4c884;
+  --color-brand-white: #fefefe;
+  --color-text-main: #4a5d4f;
+  --color-text-secondary: #7c9d72;
+  --color-text-light: #8da399;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 32px;
+  --radius-pill: 100px;
+  --shadow-sm: 0 2px 8px rgba(74, 93, 79, 0.1);
+  --shadow-md: 0 4px 16px rgba(74, 93, 79, 0.15);
+  --shadow-lg: 0 8px 32px rgba(74, 93, 79, 0.2);
+}
+
+:root {
+  --primary: #4a5d4f;
+  --secondary: #cea952;
+  --background: #fefefe;
+  --background-alt: #f4eed8;
+  --surface: rgba(255, 255, 255, 0.86);
+  --text-main: #4a5d4f;
+  --text-secondary: #7c9d72;
+  --text-light: #8da399;
+  --border-soft: rgba(241, 227, 185, 0.82);
+  --glass-shadow: 0 4px 16px rgba(74, 93, 79, 0.15);
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 32px;
+  --spacing-xl: 64px;
+  --spacing-section: 100px;
+  --max-width: 1200px;
 }
 
 @layer base {
@@ -11,24 +51,62 @@
     min-height: 100%;
   }
 
+  html {
+    background: var(--background);
+  }
+
   body {
     margin: 0;
-    font-family: var(--font-headline);
-    color: #333333;
+    font-family: var(--font-sans);
+    color: var(--text-main);
     background:
-      radial-gradient(1200px 600px at 8% -10%, rgba(175, 195, 158, 0.35), transparent 60%),
-      radial-gradient(900px 540px at 95% 20%, rgba(211, 185, 137, 0.2), transparent 65%),
-      linear-gradient(180deg, #718364 0%, #6b7d5f 40%, #64765a 100%);
-    line-height: 1.5;
+      radial-gradient(880px 440px at 10% -12%, rgba(234, 207, 147, 0.26), transparent 62%),
+      radial-gradient(760px 420px at 92% 8%, rgba(124, 157, 114, 0.12), transparent 60%),
+      linear-gradient(180deg, #fffefb 0%, #fbf8f0 48%, #f8f3e8 100%);
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+    color: var(--text-main);
+  }
+
+  p {
+    margin: 0;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
   }
 
   input,
   select,
   textarea {
     font-size: 16px;
-    accent-color: #87967a;
+    accent-color: var(--primary);
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 }
 
@@ -50,15 +128,15 @@
 @keyframes iryaPulseInner {
   0% {
     transform: scale(0.98);
-    opacity: 0.26;
+    opacity: 0.28;
   }
   50% {
     transform: scale(1.04);
-    opacity: 0.72;
+    opacity: 0.74;
   }
   100% {
     transform: scale(0.98);
-    opacity: 0.26;
+    opacity: 0.28;
   }
 }
 
@@ -103,6 +181,66 @@
 }
 
 @layer components {
+  .irya-surface {
+    background-color: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(241, 227, 185, 0.75);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .irya-card {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 252, 245, 0.9) 100%);
+    border: 1px solid rgba(241, 227, 185, 0.82);
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-lg);
+  }
+
+  .irya-section-label {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .irya-display {
+    font-family: var(--font-serif);
+    font-size: 3.1rem;
+    line-height: 1.2;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    color: var(--text-main);
+  }
+
+  .irya-heading {
+    font-family: var(--font-serif);
+    font-size: 2.05rem;
+    line-height: 1.2;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+  }
+
+  .irya-subtitle {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.5;
+    font-weight: 400;
+    color: var(--text-main);
+  }
+
+  .irya-copy {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-main);
+  }
+
+  .irya-muted {
+    color: var(--text-light);
+  }
+
   .irya-avatar-ring-outer {
     animation: iryaPulseOuter 1.8s ease-in-out infinite;
   }
@@ -122,5 +260,21 @@
 
   .irya-loading-bar {
     animation: iryaLoadingBar 2.3s ease-in-out infinite;
+  }
+}
+
+@media (max-width: 640px) {
+  @layer components {
+    .irya-display {
+      font-size: 2.15rem;
+    }
+
+    .irya-heading {
+      font-size: 1.7rem;
+    }
+
+    .irya-subtitle {
+      font-size: 1rem;
+    }
   }
 }
