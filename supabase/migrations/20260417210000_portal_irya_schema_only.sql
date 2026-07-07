@@ -11,7 +11,6 @@ alter table if exists public.irya_users
   add column if not exists senha_hash text,
   add column if not exists api_key text,
   add column if not exists nome_completo text,
-  add column if not exists altura_m double precision,
   add column if not exists data_cadastro timestamp with time zone default now();
 
 alter table if exists public.irya_assinaturas
@@ -142,9 +141,6 @@ comment on column public.irya_users.api_key is
 
 comment on column public.irya_users.nome_completo is
   'Portal Irya full name field, kept separate from existing nome/apelido fields.';
-
-comment on column public.irya_users.altura_m is
-  'Stable height captured by the Portal Irya flow.';
 
 comment on table public.irya_pilares is
   'Portal Irya questionnaire pillar catalog.';
