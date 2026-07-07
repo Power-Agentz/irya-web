@@ -27,6 +27,22 @@ const PublicRoute: React.FC<{ children: React.ReactElement; authenticated: boole
   return authenticated ? <Navigate to="/inicio" replace /> : children;
 };
 
+const RootRedirect: React.FC<{ authenticated: boolean }> = ({ authenticated }) => {
+  const location = useLocation();
+  const inviteId = new URLSearchParams(location.search).get("id");
+
+  if (authenticated) {
+    return <Navigate to="/inicio" replace />;
+  }
+
+  return (
+    <Navigate
+      to={inviteId ? `/cadastro?id=${encodeURIComponent(inviteId)}` : "/cadastro"}
+      replace
+    />
+  );
+};
+
 const AppShell: React.FC = () => {
   const [authenticated, setAuthenticated] = useState(isAuthenticated());
   const location = useLocation();
@@ -61,13 +77,7 @@ const AppShell: React.FC = () => {
         <Routes>
           <Route
             path="/"
-            element={
-              authenticated ? (
-                <Navigate to="/inicio" replace />
-              ) : (
-                <Navigate to="/cadastro" replace />
-              )
-            }
+            element={<RootRedirect authenticated={authenticated} />}
           />
 
           <Route

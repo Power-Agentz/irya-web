@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import Button from "../../components/Button/Button";
 import AuthLayout from "../../components/AuthLayout/AuthLayout";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { formatPhone, normalizePhone } from "../../utils/phone";
 import { useAuth } from "../../hooks/useAuth";
 import TextField from "../../components/TextField/TextField";
@@ -23,22 +23,45 @@ type Step = (typeof steps)[number];
 type PhoneStatus = "idle" | "checking" | "available" | "taken" | "error";
 type PhoneAvailabilityResult = "available" | "taken" | "error";
 
-const PHONE_STEP_INDEX = steps.indexOf("phone");
+type InviteContext = {
+  id: string;
+  nomeCompleto: string | null;
+  telefone: string | null;
+  senhaJaCriada: boolean;
+};
 
 export default function Cadastro() {
+  const [searchParams] = useSearchParams();
   const [stepIndex, setStepIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [inviteLoading, setInviteLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [stepError, setStepError] = useState<string | null>(null);
   const [showPhoneConfirm, setShowPhoneConfirm] = useState<boolean>(false);
   const [phoneStatus, setPhoneStatus] = useState<PhoneStatus>("idle");
   const [lastCheckedPhone, setLastCheckedPhone] = useState<string>("");
+  const [inviteContext, setInviteContext] = useState<InviteContext | null>(null);
 
   const navigate = useNavigate();
-  const { registerAndLogin, checkTelefoneDisponivel } = useAuth();
+  const {
+    registerAndLogin,
+    checkTelefoneDisponivel,
+    getPreCadastroById,
+    activatePreCadastroAndLogin,
+  } = useAuth();
 
-  const progress = ((stepIndex + 1) / steps.length) * 100;
-  const currentStep: Step = steps[stepIndex];
+  const inviteId = useMemo(
+    () => searchParams.get("id")?.trim().replace(/^"+|"+$/g, "") ?? "",
+    [searchParams],
+  );
+  const activeSteps = useMemo(
+    () => (inviteContext ? (["password", "confirm"] as const) : steps),
+    [inviteContext],
+  );
+  const PHONE_STEP_INDEX = inviteContext ? -1 : steps.indexOf("phone");
+
+  const progress = ((stepIndex + 1) / activeSteps.length) * 100;
+  const currentStep: Step = activeSteps[stepIndex] as Step;
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -46,6 +69,61 @@ export default function Cadastro() {
     password: "",
     confirmPassword: "",
   });
+
+  useEffect(() => {
+    if (!inviteId) return;
+
+    let isMounted = true;
+
+    const bootstrapInvite = async () => {
+      setInviteLoading(true);
+      setError(null);
+      setStepError(null);
+
+      try {
+        const data = await getPreCadastroById(inviteId);
+        if (!isMounted) return;
+
+        if (data.senhaJaCriada) {
+          setError(
+            "Esse acesso já foi ativado. Entre com seu telefone e senha para continuar.",
+          );
+          setInviteContext(null);
+          setStepIndex(0);
+          return;
+        }
+
+        setInviteContext(data);
+        setFormData((prev) => ({
+          ...prev,
+          fullName: data.nomeCompleto ?? "",
+          phone: data.telefone ? formatPhone(data.telefone) : "",
+        }));
+        setPhoneStatus("available");
+        setLastCheckedPhone(data.telefone ?? "");
+        setStepIndex(0);
+      } catch (err: unknown) {
+        if (!isMounted) return;
+        setInviteContext(null);
+        setError(
+          getApiErrorMessage(
+            err,
+            "Não foi possível validar o link enviado. Você pode seguir com o cadastro manual.",
+          ),
+        );
+      } finally {
+        if (isMounted) {
+          setInviteLoading(false);
+        }
+      }
+    };
+
+    void bootstrapInvite();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [getPreCadastroById, inviteId]);
 
   const update = (field: keyof typeof formData, value: string) => {
     setStepError(null);
@@ -55,7 +133,7 @@ export default function Cadastro() {
 
   const next = () => {
     setStepError(null);
-    setStepIndex((s) => Math.min(s + 1, steps.length - 1));
+    setStepIndex((s) => Math.min(s + 1, activeSteps.length - 1));
   };
 
   const back = () => {
@@ -205,11 +283,18 @@ export default function Cadastro() {
     setError(null);
 
     try {
-      await registerAndLogin({
-        nomeCompleto: formData.fullName,
-        telefone: normalizedPhone,
-        senha: formData.password,
-      });
+      if (inviteContext) {
+        await activatePreCadastroAndLogin({
+          id: inviteContext.id,
+          senha: formData.password,
+        });
+      } else {
+        await registerAndLogin({
+          nomeCompleto: formData.fullName,
+          telefone: normalizedPhone,
+          senha: formData.password,
+        });
+      }
 
       navigate("/inicio");
     } catch (err: unknown) {
@@ -224,12 +309,21 @@ export default function Cadastro() {
         err.response?.status === 409 &&
         message.toLowerCase().includes("telefone");
 
+      const isInviteAlreadyActivated =
+        inviteContext &&
+        axios.isAxiosError(err) &&
+        err.response?.status === 409;
+
       if (isTelefoneConflito) {
         setStepIndex(PHONE_STEP_INDEX);
         setStepError(
           "Este telefone já está cadastrado. Faça login ou use outro número.",
         );
         setPhoneStatus("taken");
+      } else if (isInviteAlreadyActivated) {
+        setStepError(
+          "Esse acesso já foi ativado. Faça login com seu telefone e senha.",
+        );
       }
     } finally {
       setLoading(false);
@@ -385,6 +479,22 @@ export default function Cadastro() {
       case "password":
         return (
           <div className="space-y-4">
+            {inviteContext && (
+              <div className="rounded-2xl border border-[#f1e3b9] bg-[#fffaf1] p-4 text-sm text-[#4a5d4f]">
+                <p className="irya-section-label">Acesso preparado para você</p>
+                <p className="mt-2">
+                  {inviteContext.nomeCompleto || "Seu cadastro"} já foi iniciado.
+                </p>
+                {inviteContext.telefone && (
+                  <p className="mt-1 text-[#7c9d72]">
+                    WhatsApp: {formatPhone(inviteContext.telefone)}
+                  </p>
+                )}
+                <p className="mt-2">
+                  Agora falta apenas criar sua senha para liberar sua entrada.
+                </p>
+              </div>
+            )}
             <TextField
               type="password"
               label="Crie uma senha"
@@ -407,17 +517,30 @@ export default function Cadastro() {
           <div className="space-y-3">
             <h3 className="font-['Libre_Baskerville',serif] text-xl font-normal text-[#4a5d4f]">Prontinho!</h3>
             <p className="text-[15px] font-light sm:text-base">
-              Agora você terá acesso à Minha Irya<span className="ml-0.5 text-xs">©</span>, aqui você vai acompanhar o
-              seu progresso e entender como estamos juntas atingindo os seus
-              objetivos.
+              {inviteContext
+                ? <>Sua senha será vinculada ao seu cadastro existente e sua entrada na Minha Irya<span className="ml-0.5 text-xs">©</span> será liberada.</>
+                : <>Agora você terá acesso à Minha Irya<span className="ml-0.5 text-xs">©</span>, aqui você vai acompanhar o seu progresso e entender como estamos juntas atingindo os seus objetivos.</>}
             </p>
             <p className="text-[15px] font-light sm:text-base">
-              Ao clicar em <b>Criar conta</b>, seguimos juntas com mais leveza.
+              Ao clicar em <b>{inviteContext ? "Ativar acesso" : "Criar conta"}</b>, seguimos juntas com mais leveza.
             </p>
           </div>
         );
     }
   };
+
+  if (inviteLoading) {
+    return (
+      <AuthLayout>
+        <div className="mt-8 flex min-h-[220px] items-center justify-center">
+          <div className="inline-flex items-center gap-3 rounded-2xl border border-[#f1e3b9] bg-[#fffaf1] px-5 py-4 text-sm text-[#4a5d4f]">
+            <LoadingIcon size="sm" className="text-[#4a5d4f]" />
+            <span>Validando seu acesso...</span>
+          </div>
+        </div>
+      </AuthLayout>
+    );
+  }
 
   return (
     <AuthLayout>
@@ -472,7 +595,7 @@ export default function Cadastro() {
             />
           )}
 
-          {stepIndex < steps.length - 1 && (
+          {stepIndex < activeSteps.length - 1 && (
             <Button
               onClick={() => void handleNext()}
               disabled={!canProceed()}
@@ -482,17 +605,19 @@ export default function Cadastro() {
                   ? "Iniciar"
                   : currentStep === "manifesto"
                     ? "Quero continuar"
-                    : "Próximo"
+                    : inviteContext && currentStep === "password"
+                      ? "Continuar"
+                      : "Próximo"
               }
               fullWidth={false}
               className="sm:min-w-[180px]"
             />
           )}
 
-          {stepIndex === steps.length - 1 && (
+          {stepIndex === activeSteps.length - 1 && (
             <Button
               onClick={handleRegister}
-              label={loading ? "Criando..." : "Criar conta"}
+              label={loading ? (inviteContext ? "Ativando..." : "Criando...") : inviteContext ? "Ativar acesso" : "Criar conta"}
               variant="primary"
               loading={loading}
               fullWidth={false}

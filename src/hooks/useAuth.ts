@@ -19,6 +19,11 @@ interface RegisterPayload {
   senha: string;
 }
 
+interface ActivateInvitePayload {
+  id: string;
+  senha: string;
+}
+
 interface AuthResponse {
   token: string;
   paciente: PacienteSession;
@@ -26,6 +31,13 @@ interface AuthResponse {
 
 interface TelefoneDisponivelResponse {
   disponivel: boolean;
+}
+
+interface PreCadastroResponse {
+  id: string;
+  nomeCompleto: string | null;
+  telefone: string | null;
+  senhaJaCriada: boolean;
 }
 
 export const useAuth = () => {
@@ -54,6 +66,26 @@ export const useAuth = () => {
     [login],
   );
 
+  const getPreCadastroById = useCallback(async (id: string) => {
+    const response = await api.get<PreCadastroResponse>(`/auth/pre-cadastro/${id}`);
+    return response.data;
+  }, []);
+
+  const activatePreCadastroAndLogin = useCallback(
+    async ({ id, senha }: ActivateInvitePayload) => {
+      const response = await api.post<AuthResponse>("/auth/pre-cadastro/ativar", {
+        id,
+        senha,
+      });
+
+      const { token, paciente } = response.data;
+      saveSession(token, paciente);
+
+      return response.data;
+    },
+    [],
+  );
+
   const logout = useCallback(() => {
     clearSession();
   }, []);
@@ -74,6 +106,8 @@ export const useAuth = () => {
     login,
     logout,
     registerAndLogin,
+    getPreCadastroById,
+    activatePreCadastroAndLogin,
     checkTelefoneDisponivel,
     getPaciente,
     isAuthenticated,
