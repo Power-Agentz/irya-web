@@ -16,7 +16,7 @@ import iryaGrata from "../../../assets/irya-grata.png";
 const FINALIZATION_DELAY_MS = 5600;
 
 interface Pergunta {
-  id: number;
+  id: string;
   textoPergunta: string;
   ordem: number;
   ehInvertida: boolean;
@@ -24,13 +24,13 @@ interface Pergunta {
 }
 
 interface Pilar {
-  id: number;
+  id: string;
   nomePilar: string;
   pontuacaoMaxima: number;
   perguntas: Pergunta[];
 }
 
-type AnswersState = Record<number, number>;
+type AnswersState = Record<string, number>;
 
 const parsePesoInput = (value: string): number | null => {
   const sanitized = value.replace(/,/g, ".").replace(/[^0-9.]/g, "");
@@ -137,13 +137,13 @@ const Questionario: React.FC = () => {
     );
   }, [pilaresData]);
 
-  const questionMap: Record<number, Pergunta> = useMemo(() => {
+  const questionMap: Record<string, Pergunta> = useMemo(() => {
     return allQuestions.reduce(
       (acc, q) => {
         acc[q.id] = q;
         return acc;
       },
-      {} as Record<number, Pergunta>,
+      {} as Record<string, Pergunta>,
     );
   }, [allQuestions]);
 
@@ -227,7 +227,7 @@ const Questionario: React.FC = () => {
     }
   }, [answers, currentQuestion, isLastStep, isWeightStep, parsedAltura, parsedPesoAtual]);
 
-  const handleAnswerChange = useCallback((perguntaId: number, score: number) => {
+  const handleAnswerChange = useCallback((perguntaId: string, score: number) => {
     setAnswers((prevAnswers) => ({
       ...prevAnswers,
       [perguntaId]: score,
@@ -255,7 +255,7 @@ const Questionario: React.FC = () => {
 
       const submissionData = Object.entries(answers)
         .map(([id, score]) => {
-          const perguntaId = parseInt(id, 10);
+          const perguntaId = id;
           const questionMeta = questionMap[perguntaId];
 
           if (!questionMeta) {
